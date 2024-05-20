@@ -22,8 +22,7 @@
                 <li><a href="#" class="btn signup" id="signup-btn">Cadastrar</a></li>
             </ul>
             <ul id="user-info" style="display: none;">
-                <li><span id="user-name">JU YEONG LEE</span>, <span id="user-balance">잔액 : 1.422.655 BRL</span></li>
-                <li><a href="#" class="btn home" id="user-home-btn">Home</a></li>
+                <li><span id="user-name">JU YEONG LEE</span>, <span id="user-balance">잔액: 2.857.040 BRL</span></li>
                 <li><a href="#" class="btn deposit">Depositar</a></li>
                 <li><a href="#" class="btn logout" id="logout-btn">Logout</a></li>
             </ul>
@@ -41,12 +40,30 @@
             </ul>
         </aside>
         <main id="main-content">
-            <section class="banner">
-                <div class="slide">
-                    <h1>Bem-vindo ao Black Dice CASINO</h1>
-                    <p>Experimente os melhores jogos de cassino online</p>
-                    <a href="#" class="btn play-now">Jogar Agora</a>
+            <section class="banner" id="banner-section">
+                <div class="banner-slider" id="banner-slider">
+                    <div class="slide">
+                        <img src="assets/img/banner1.png" alt="Banner 1">
+                        <div class="banner-text">
+                            <h1>Promoção Imperdível!</h1>
+                            <p>Ganhe até 500% de bônus!</p>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <img src="assets/img/banner2.png" alt="Banner 2">
+                        <div class="banner-text">
+                            <h1>Giros Grátis</h1>
+                            <p>Até 100 giros grátis em slots!</p>
+                        </div>
+                    </div>
+                    <!-- Add more banners as needed -->
                 </div>
+            </section>
+            <section class="video-container" id="video-container" style="display: none;">
+                <video id="game-video" width="100%" controls>
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </section>
             <section class="games" id="popular-games">
                 <h2>Jogos Populares</h2>
@@ -123,19 +140,6 @@
                 </form>
             </div>
         </main>
-        <div id="chat-container">
-            <div id="chat-header">
-                <span>Chat</span>
-                <button id="chat-toggle-btn">−</button>
-            </div>
-            <div id="chat-box" style="display: none;">
-                <div id="chat-messages"></div>
-                <div id="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
-                    <button id="chat-send-btn">Enviar</button>
-                </div>
-            </div>
-        </div>
     </div>
     <footer>
         <p>&copy; 2024 Black Dice CASINO. Todos os direitos reservados.</p>
@@ -149,6 +153,10 @@
         var formContent = document.getElementById("form-content");
         var loginForm = document.getElementById("login-form");
         var signupForm = document.getElementById("signup-form");
+        var videoContainer = document.getElementById("video-container");
+        var gameVideo = document.getElementById("game-video");
+        var bannerSection = document.getElementById("banner-section");
+        var bannerSlider = document.getElementById("banner-slider");
 
         // Get open modal buttons
         var homeBtn = document.getElementById("home-btn");
@@ -170,6 +178,8 @@
         homeBtn.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "block";
             document.getElementById("popular-games").style.display = "block";
             document.getElementById("live-casino-games").style.display = "none";
             document.getElementById("slots-games").style.display = "none";
@@ -180,6 +190,8 @@
         loginBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
             formContent.style.display = "flex";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "none";
             loginForm.style.display = "block";
             signupForm.style.display = "none";
         });
@@ -187,6 +199,8 @@
         signupBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
             formContent.style.display = "flex";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "none";
             loginForm.style.display = "none";
             signupForm.style.display = "block";
         });
@@ -209,6 +223,7 @@
             if (username === "xxxadm" && password === "xxx") {
                 navMenu.style.display = "none";
                 userInfo.style.display = "flex";
+                showLiveCasino();
             } else {
                 alert("Usuário ou senha incorretos");
             }
@@ -219,6 +234,17 @@
             userInfo.style.display = "none";
         });
 
+        function showLiveCasino() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "block";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "none";
+        }
+
         function generateGames(sectionId, count) {
             var section = document.getElementById(sectionId);
             var gamesGrid = section.querySelector('.games-grid');
@@ -228,15 +254,26 @@
                 var gameItem = document.createElement('div');
                 gameItem.className = 'game-item';
                 gameItem.innerHTML = `
-                    <img src="assets/img/game${i % 12 + 1}.jpg" alt="Game ${i + 1}">
+                    <img src="assets/img/image${i % 60 + 1}.png" alt="Game ${i + 1}">
                     <h3>Nome do Jogo ${i + 1}</h3>
                     <div class="game-buttons">
-                        <a href="https://casinoapp.pokerstars.com/auxgames/PS/com/web/container.html?site=com&pathPlatform=web&nano=2&home=about%3Ablank&lm=0x53&_jr=0&currency=USD&_rtable=%7B%22tId%22%3A3086942158%2C%22tNm%22%3A%22EvBaccaratReal%22%2C%22sAddr%22%3A%22ip%3Ac_factory3address%3Aport%22%2C%22sInst%22%3A%22auxtable.3086942158%22%2C%22gType%22%3A1002%2C%22ttId%22%3A18063390%2C%22maxS%22%3A1%2C%22pType%22%3A1%2C%22vId%22%3A3%2C%22tech%22%3A2%2C%22ftrs%22%3A32%2C%22numOf%22%3A0%2C%22gSet%22%3A%7B%22lUrl%22%3A%22%22%2C%22initp%22%3A%22%3Cconfig%3E%3Cpage%3E103%3C%2Fpage%3E%3CgameType%3Ebaccarat%3C%2FgameType%3E%3Ccategory%3Ebaccarat%3C%2Fcategory%3E%3C%2Fconfig%3E%22%7D%2C%22fsbId%22%3A0%2C%22pFF%22%3A0%2C%22vType%22%3A3%2C%22uid%22%3A%22NPJEER%22%2C%22vName%22%3A%22Live%20Baccarat%22%2C%22ufgId%22%3A0%2C%22minBet%22%3A0%2C%22maxBet%22%3A2500000%2C%22mbin%22%3A0%2C%22cur%22%3A%22USD%22%2C%22lm%22%3A83%2C%22fbId%22%3A0%2C%22fbType%22%3A0%2C%22url%22%3A%22%22%2C%22lines%22%3A%22%22%2C%22holdRate%22%3A106000%2C%22multiplier%22%3Afalse%2C%22wilds%22%3Afalse%2C%22featureNames%22%3A%22%22%2C%22tags%22%3A%22GameInfo%22%7D&hostId=2&background=%2F%2Fimg.rationalcdn.com%2Fstarsweb%2Fprod%2F1632_16.jpg&loginPlatform=5" class="btn small play-now" target="_blank">Jogar Agora</a>
+                        <a href="javascript:void(0)" class="btn small play-now" data-video="assets/videos/game${i + 1}.mp4">Jogar Agora</a>
                         <a href="#" class="btn small">Demo</a>
                     </div>
                 `;
                 gamesGrid.appendChild(gameItem);
             }
+
+            var playNowButtons = document.querySelectorAll(".play-now");
+            playNowButtons.forEach(function(button) {
+                button.addEventListener("click", function() {
+                    var videoSrc = this.getAttribute("data-video");
+                    bannerSection.style.display = "none";
+                    videoContainer.style.display = "block";
+                    gameVideo.src = videoSrc;
+                    gameVideo.play();
+                });
+            });
         }
 
         // Initialize games on page load
@@ -246,17 +283,14 @@
         generateGames('sports-games', 60);
 
         liveCasinoSidebar.addEventListener("click", function() {
-            mainContent.style.display = "block";
-            formContent.style.display = "none";
-            document.getElementById("popular-games").style.display = "none";
-            document.getElementById("live-casino-games").style.display = "block";
-            document.getElementById("slots-games").style.display = "none";
-            document.getElementById("sports-games").style.display = "none";
+            showLiveCasino();
         });
 
         slotsSidebar.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "none";
             document.getElementById("popular-games").style.display = "none";
             document.getElementById("live-casino-games").style.display = "none";
             document.getElementById("slots-games").style.display = "block";
@@ -266,42 +300,14 @@
         sportsSidebar.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
+            videoContainer.style.display = "none";
+            bannerSection.style.display = "none";
             document.getElementById("popular-games").style.display = "none";
             document.getElementById("live-casino-games").style.display = "none";
             document.getElementById("slots-games").style.display = "none";
             document.getElementById("sports-games").style.display = "block";
         });
 
-        // Chat toggle functionality
-        var chatContainer = document.getElementById("chat-container");
-        var chatHeader = document.getElementById("chat-header");
-        var chatBox = document.getElementById("chat-box");
-        var chatToggleBtn = document.getElementById("chat-toggle-btn");
-
-        chatToggleBtn.addEventListener("click", function() {
-            if (chatBox.style.display === "none") {
-                chatBox.style.display = "flex";
-                chatToggleBtn.textContent = "−";
-            } else {
-                chatBox.style.display = "none";
-                chatToggleBtn.textContent = "+";
-            }
-        });
-
-        // Example function to handle sending messages (this can be expanded)
-        var chatSendBtn = document.getElementById("chat-send-btn");
-        var chatInput = document.getElementById("chat-input");
-        var chatMessages = document.getElementById("chat-messages");
-
-        chatSendBtn.addEventListener("click", function() {
-            var message = chatInput.value;
-            if (message.trim() !== "") {
-                var messageElement = document.createElement("div");
-                messageElement.textContent = message;
-                chatMessages.appendChild(messageElement);
-                chatInput.value = "";
-            }
-        });
     </script>
 </body>
 </html>
