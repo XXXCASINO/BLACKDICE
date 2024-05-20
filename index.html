@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Dice CASINO</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">Black Dice CASINO</div>
+        <nav>
+            <ul id="nav-menu">
+                <li><a href="#" id="home-btn">Início</a></li>
+                <li><a href="#" id="games-btn">Jogos</a></li>
+                <li><a href="#" id="promotions-btn">Promoções</a></li>
+                <li><a href="#" id="live-casino-btn">Cassino Ao Vivo</a></li>
+                <li><a href="#" id="slots-btn">Slots</a></li>
+                <li><a href="#" id="sports-btn">Esportes</a></li>
+                <li><a href="#" id="contact-btn">Contato</a></li>
+                <li><a href="#" class="btn login" id="login-btn">Entrar</a></li>
+                <li><a href="#" class="btn signup" id="signup-btn">Cadastrar</a></li>
+            </ul>
+            <ul id="user-info" style="display: none;">
+                <li><span id="user-name">JU YEONG LEE</span>, <span id="user-balance">잔액 : 100.000 BRL</span></li>
+                <li><a href="#" class="btn home" id="user-home-btn">Home</a></li>
+                <li><a href="#" class="btn deposit">Depositar</a></li>
+                <li><a href="#" class="btn logout" id="logout-btn">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <div class="container">
+        <aside class="sidebar">
+            <ul>
+                <li><a href="#" id="live-casino-sidebar">Cassino Ao Vivo</a></li>
+                <li><a href="#" id="slots-sidebar">Slots</a></li>
+                <li><a href="#" id="sports-sidebar">Esportes</a></li>
+                <li><a href="#">Black Dice</a></li>
+                <li><a href="#">Bônus</a></li>
+                <li><a href="#">Suporte</a></li>
+            </ul>
+        </aside>
+        <main id="main-content">
+            <section class="banner">
+                <div class="slide">
+                    <h1>Bem-vindo ao Black Dice CASINO</h1>
+                    <p>Experimente os melhores jogos de cassino online</p>
+                    <a href="#" class="btn play-now">Jogar Agora</a>
+                </div>
+            </section>
+            <section class="games" id="popular-games">
+                <h2>Jogos Populares</h2>
+                <div class="games-grid">
+                    <!-- 12 Popular Games -->
+                </div>
+            </section>
+            <section class="live-casino" id="live-casino-games" style="display: none;">
+                <h2>Cassino Ao Vivo</h2>
+                <div class="games-grid">
+                    <!-- 60 Live Casino Games -->
+                </div>
+            </section>
+            <section class="slots" id="slots-games" style="display: none;">
+                <h2>Slots</h2>
+                <div class="games-grid">
+                    <!-- 60 Slots Games -->
+                </div>
+            </section>
+            <section class="sports" id="sports-games" style="display: none;">
+                <h2>Esportes</h2>
+                <div class="games-grid">
+                    <!-- 60 Sports Games -->
+                </div>
+            </section>
+        </main>
+        <main id="form-content" style="display: none;">
+            <div class="form-container">
+                <form id="login-form">
+                    <h2>Entrar</h2>
+                    <div class="form-group">
+                        <label for="username">Usuário:</label>
+                        <input type="text" id="username" name="username" required maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" name="password" required maxlength="20">
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn login">Entrar</button>
+                        <button type="button" class="btn signup" id="show-signup-form">Cadastrar</button>
+                    </div>
+                </form>
+                <form id="signup-form" method="POST" action="signup.php" style="display: none;">
+                    <h2>Cadastrar</h2>
+                    <div class="form-group">
+                        <label for="name">Nome:</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pix">PIX:</label>
+                        <input type="text" id="pix" name="pix" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cpf">CPF:</label>
+                        <input type="text" id="cpf" name="cpf" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dob">Data de Nascimento:</label>
+                        <input type="date" id="dob" name="dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn signup">Cadastrar</button>
+                        <button type="button" class="btn login" id="show-login-form">Entrar</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <div id="chat-container">
+            <div id="chat-header">
+                <span>Chat</span>
+                <button id="chat-toggle-btn">−</button>
+            </div>
+            <div id="chat-box" style="display: none;">
+                <div id="chat-messages"></div>
+                <div id="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="Digite sua mensagem...">
+                    <button id="chat-send-btn">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>&copy; 2024 Black Dice CASINO. Todos os direitos reservados.</p>
+        <p>A Prolific Trade N.V. é licenciada e regulamentada pela Antillephone N.V, sob a licença nº 8048/JAZ2024-009</p>
+        <p>A Black Dice aceita apenas clientes com mais de 18 anos de idade. Apostar pode ser viciante. Jogue responsavelmente.</p>
+    </footer>
+
+    <script>
+        // Get modal elements
+        var mainContent = document.getElementById("main-content");
+        var formContent = document.getElementById("form-content");
+        var loginForm = document.getElementById("login-form");
+        var signupForm = document.getElementById("signup-form");
+
+        // Get open modal buttons
+        var homeBtn = document.getElementById("home-btn");
+        var loginBtn = document.getElementById("login-btn");
+        var signupBtn = document.getElementById("signup-btn");
+        var showSignupFormBtn = document.getElementById("show-signup-form");
+        var showLoginFormBtn = document.getElementById("show-login-form");
+
+        // Get sidebar menu buttons
+        var liveCasinoSidebar = document.getElementById("live-casino-sidebar");
+        var slotsSidebar = document.getElementById("slots-sidebar");
+        var sportsSidebar = document.getElementById("sports-sidebar");
+
+        // Get user info elements
+        var navMenu = document.getElementById("nav-menu");
+        var userInfo = document.getElementById("user-info");
+
+        // Listen for open click
+        homeBtn.addEventListener("click", function() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            document.getElementById("popular-games").style.display = "block";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "none";
+            generateGames('popular-games', 12); // Add games to popular games section
+        });
+
+        loginBtn.addEventListener("click", function() {
+            mainContent.style.display = "none";
+            formContent.style.display = "flex";
+            loginForm.style.display = "block";
+            signupForm.style.display = "none";
+        });
+
+        signupBtn.addEventListener("click", function() {
+            mainContent.style.display = "none";
+            formContent.style.display = "flex";
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
+
+        showSignupFormBtn.addEventListener("click", function() {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
+
+        showLoginFormBtn.addEventListener("click", function() {
+            signupForm.style.display = "none";
+            loginForm.style.display = "block";
+        });
+
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+
+            if (username === "xxxadm" && password === "xxx") {
+                navMenu.style.display = "none";
+                userInfo.style.display = "flex";
+            } else {
+                alert("Usuário ou senha incorretos");
+            }
+        });
+
+        document.getElementById("logout-btn").addEventListener("click", function() {
+            navMenu.style.display = "flex";
+            userInfo.style.display = "none";
+        });
+
+        function generateGames(sectionId, count) {
+            var section = document.getElementById(sectionId);
+            var gamesGrid = section.querySelector('.games-grid');
+            gamesGrid.innerHTML = '';
+
+            for (var i = 0; i < count; i++) {
+                var gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerHTML = `
+                    <img src="assets/img/game${i % 12 + 1}.jpg" alt="Game ${i + 1}">
+                    <h3>Nome do Jogo ${i + 1}</h3>
+                    <div class="game-buttons">
+                        <a href="https://casinoapp.pokerstars.com/auxgames/PS/com/web/container.html?site=com&pathPlatform=web&nano=2&home=about%3Ablank&lm=0x53&_jr=0&currency=USD&_rtable=%7B%22tId%22%3A3086942158%2C%22tNm%22%3A%22EvBaccaratReal%22%2C%22sAddr%22%3A%22ip%3Ac_factory3address%3Aport%22%2C%22sInst%22%3A%22auxtable.3086942158%22%2C%22gType%22%3A1002%2C%22ttId%22%3A18063390%2C%22maxS%22%3A1%2C%22pType%22%3A1%2C%22vId%22%3A3%2C%22tech%22%3A2%2C%22ftrs%22%3A32%2C%22numOf%22%3A0%2C%22gSet%22%3A%7B%22lUrl%22%3A%22%22%2C%22initp%22%3A%22%3Cconfig%3E%3Cpage%3E103%3C%2Fpage%3E%3CgameType%3Ebaccarat%3C%2FgameType%3E%3Ccategory%3Ebaccarat%3C%2Fcategory%3E%3C%2Fconfig%3E%22%7D%2C%22fsbId%22%3A0%2C%22pFF%22%3A0%2C%22vType%22%3A3%2C%22uid%22%3A%22NPJEER%22%2C%22vName%22%3A%22Live%20Baccarat%22%2C%22ufgId%22%3A0%2C%22minBet%22%3A0%2C%22maxBet%22%3A2500000%2C%22mbin%22%3A0%2C%22cur%22%3A%22USD%22%2C%22lm%22%3A83%2C%22fbId%22%3A0%2C%22fbType%22%3A0%2C%22url%22%3A%22%22%2C%22lines%22%3A%22%22%2C%22holdRate%22%3A106000%2C%22multiplier%22%3Afalse%2C%22wilds%22%3Afalse%2C%22featureNames%22%3A%22%22%2C%22tags%22%3A%22GameInfo%22%7D&hostId=2&background=%2F%2Fimg.rationalcdn.com%2Fstarsweb%2Fprod%2F1632_16.jpg&loginPlatform=5" class="btn small play-now" target="_blank">Jogar Agora</a>
+                        <a href="#" class="btn small">Demo</a>
+                    </div>
+                `;
+                gamesGrid.appendChild(gameItem);
+            }
+        }
+
+        // Initialize games on page load
+        generateGames('popular-games', 12);
+        generateGames('live-casino-games', 60);
+        generateGames('slots-games', 60);
+        generateGames('sports-games', 60);
+
+        liveCasinoSidebar.addEventListener("click", function() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "block";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "none";
+        });
+
+        slotsSidebar.addEventListener("click", function() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "block";
+            document.getElementById("sports-games").style.display = "none";
+        });
+
+        sportsSidebar.addEventListener("click", function() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "block";
+        });
+
+        // Chat toggle functionality
+        var chatContainer = document.getElementById("chat-container");
+        var chatHeader = document.getElementById("chat-header");
+        var chatBox = document.getElementById("chat-box");
+        var chatToggleBtn = document.getElementById("chat-toggle-btn");
+
+        chatToggleBtn.addEventListener("click", function() {
+            if (chatBox.style.display === "none") {
+                chatBox.style.display = "flex";
+                chatToggleBtn.textContent = "−";
+            } else {
+                chatBox.style.display = "none";
+                chatToggleBtn.textContent = "+";
+            }
+        });
+
+        // Example function to handle sending messages (this can be expanded)
+        var chatSendBtn = document.getElementById("chat-send-btn");
+        var chatInput = document.getElementById("chat-input");
+        var chatMessages = document.getElementById("chat-messages");
+
+        chatSendBtn.addEventListener("click", function() {
+            var message = chatInput.value;
+            if (message.trim() !== "") {
+                var messageElement = document.createElement("div");
+                messageElement.textContent = message;
+                chatMessages.appendChild(messageElement);
+                chatInput.value = "";
+            }
+        });
+    </script>
+</body>
+</html>
