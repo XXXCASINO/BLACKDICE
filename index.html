@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Black Dice CASINO</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
     <header>
@@ -43,7 +43,7 @@
             <section class="banner" id="banner-section">
                 <div class="banner-slider" id="banner-slider">
                     <div class="slide">
-                        <img src="assets/img/banner1.png" alt="Banner 1">
+                        <img src="assets/img/banner2.png" alt="Banner 1">
                         <div class="banner-text">
                             <h1>Promoção Imperdível!</h1>
                             <p>Ganhe até 500% de bônus!</p>
@@ -59,11 +59,8 @@
                     <!-- Add more banners as needed -->
                 </div>
             </section>
-            <section class="video-container" id="video-container" style="display: none;">
-                <video id="game-video" width="100%" controls>
-                    <source src="" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
+            <section class="iframe-container" id="iframe-container" style="display: none;">
+                <iframe id="game-iframe" width="100%" height="600px" src="" frameborder="0"></iframe>
             </section>
             <section class="games" id="popular-games">
                 <h2>Jogos Populares</h2>
@@ -153,8 +150,8 @@
         var formContent = document.getElementById("form-content");
         var loginForm = document.getElementById("login-form");
         var signupForm = document.getElementById("signup-form");
-        var videoContainer = document.getElementById("video-container");
-        var gameVideo = document.getElementById("game-video");
+        var iframeContainer = document.getElementById("iframe-container");
+        var gameIframe = document.getElementById("game-iframe");
         var bannerSection = document.getElementById("banner-section");
         var bannerSlider = document.getElementById("banner-slider");
 
@@ -178,7 +175,7 @@
         homeBtn.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "block";
             document.getElementById("popular-games").style.display = "block";
             document.getElementById("live-casino-games").style.display = "none";
@@ -190,7 +187,7 @@
         loginBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
             formContent.style.display = "flex";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
             loginForm.style.display = "block";
             signupForm.style.display = "none";
@@ -199,7 +196,7 @@
         signupBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
             formContent.style.display = "flex";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
             loginForm.style.display = "none";
             signupForm.style.display = "block";
@@ -237,7 +234,7 @@
         function showLiveCasino() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
             document.getElementById("popular-games").style.display = "none";
             document.getElementById("live-casino-games").style.display = "block";
@@ -250,14 +247,27 @@
             var gamesGrid = section.querySelector('.games-grid');
             gamesGrid.innerHTML = '';
 
+            var gameNames = [
+                "Blackjack Classic", "Roleta Europeia", "Baccarat", "Poker Texas Hold'em", "Bingo", "Caça-níquel Megaways",
+                "Craps", "Pôquer de Três Cartas", "Baccarat Ao Vivo", "Roleta Americana", "Blackjack VIP", "Dream Catcher",
+                "Monopoly Live", "Mega Ball", "Sic Bo", "Dragon Tiger", "Jogo do Bicho", "Keno", "Roleta Francesa", "Blackjack Switch",
+                "Stud Poker", "Casino Hold'em", "Double Ball Roulette", "Football Studio", "Lightning Dice", "Deal or No Deal",
+                "Side Bet City", "Crazy Time", "Mega Wheel", "Cash or Crash", "Gonzo's Treasure Hunt", "Roulette Double Up",
+                "Poker Omaha", "Baccarat Squeeze", "Pontoon", "Three Card Poker Prime", "Dragonara Roulette", "Auto Roulette",
+                "Speed Baccarat", "No Commission Baccarat", "First Person Blackjack", "Caribbean Stud Poker", "Texas Hold'em Bonus",
+                "Free Bet Blackjack", "Infinite Blackjack", "Blackjack Party", "Instant Roulette", "Double Exposure Blackjack",
+                "European Poker Tour", "World Series of Poker", "PokerStars Live", "All American Poker", "Ultimate Texas Hold'em",
+                "Let It Ride", "Pai Gow Poker", "Five Card Draw", "High Card Flush", "Razz Poker", "Chinese Poker", "Open Face Chinese Poker"
+            ];
+
             for (var i = 0; i < count; i++) {
                 var gameItem = document.createElement('div');
                 gameItem.className = 'game-item';
                 gameItem.innerHTML = `
-                    <img src="image${i % 60 + 1}.png" alt="Game ${i + 1}">
-                    <h3>Nome do Jogo ${i + 1}</h3>
+                    <img src="assets/img/image${i % 60 + 1}.png" alt="${gameNames[i % gameNames.length]}">
+                    <h3>${gameNames[i % gameNames.length]}</h3>
                     <div class="game-buttons">
-                        <a href="javascript:void(0)" class="btn small play-now" data-video="assets/videos/game${i + 1}.mp4">Jogar Agora</a>
+                        <a href="javascript:void(0)" class="btn small play-now" data-video="https://client.pragmaticplaylive.net/desktop/baccaratgame/?tabletype=baccaratgame&casino_id=ppcdk00000003125&web_server=https://gs7.pragmaticplaylive.net&config_url=/cgibin/appconfig/xml/configs/urls.xml&JSESSIONID=Mgyr8QVJd-iD_qePKF-BoWd-MejUOQ6GjiT6RkkHbgK3x8hPU4VV!-1126357492-02f58491&table_id=bc281koreanch281&socket_server=wss://gs7.pragmaticplaylive.net/game&token=Mgyr8QVJd-iD_qePKF-BoWd-MejUOQ6GjiT6RkkHbgK3x8hPU4VV!-1126357492-02f58491&stats_collector_uuid=1ae7e98e-9086-4591-94cc-26d5f29f2f5e&actual_web_server=https://gs7.pragmaticplaylive.net&socket_port=443&uiAddress=https://client.pragmaticplaylive.net/desktop/baccaratgame/&uiversion=1.15.2&gametype=baccarat&operator_theme=default/speed_baccarat_korean&game_mode=html5_desktop&lobby_version=2&lang=ko&swf_lobby_path=/member/games/lobby.swf&meta_server=https://games.pragmaticplaylive.net&lobbyGameSymbol=null&">Jogar Agora</a>
                         <a href="#" class="btn small">Demo</a>
                     </div>
                 `;
@@ -269,9 +279,8 @@
                 button.addEventListener("click", function() {
                     var videoSrc = this.getAttribute("data-video");
                     bannerSection.style.display = "none";
-                    videoContainer.style.display = "block";
-                    gameVideo.src = videoSrc;
-                    gameVideo.play();
+                    iframeContainer.style.display = "block";
+                    gameIframe.src = videoSrc;
                 });
             });
         }
@@ -289,7 +298,7 @@
         slotsSidebar.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
             document.getElementById("popular-games").style.display = "none";
             document.getElementById("live-casino-games").style.display = "none";
@@ -300,7 +309,7 @@
         sportsSidebar.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
-            videoContainer.style.display = "none";
+            iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
             document.getElementById("popular-games").style.display = "none";
             document.getElementById("live-casino-games").style.display = "none";
