@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black Dice CASINO</title>
+    <title>BLACK DICE CASINO</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
                 <li><a href="#" class="btn signup" id="signup-btn">Cadastrar</a></li>
             </ul>
             <ul id="user-info" style="display: none;">
-                <li><span id="user-name">JU YEONG LEE</span>, <span id="user-balance">잔액: 2.857.040 BRL</span></li>
+                <li><span id="user-name"></span>, <span id="user-balance"></span></li>
                 <li><a href="#" class="btn deposit">Depositar</a></li>
                 <li><a href="#" class="btn logout" id="logout-btn">Logout</a></li>
             </ul>
@@ -56,7 +56,6 @@
                             <p>Até 100 giros grátis em slots!</p>
                         </div>
                     </div>
-                    <!-- Add more banners as needed -->
                 </div>
             </section>
             <section class="iframe-container" id="iframe-container" style="display: none;">
@@ -64,27 +63,19 @@
             </section>
             <section class="games" id="popular-games">
                 <h2>Jogos Populares</h2>
-                <div class="games-grid">
-                    <!-- 12 Popular Games -->
-                </div>
+                <div class="games-grid"></div>
             </section>
             <section class="live-casino" id="live-casino-games" style="display: none;">
                 <h2>Cassino Ao Vivo</h2>
-                <div class="games-grid">
-                    <!-- 60 Live Casino Games -->
-                </div>
+                <div class="games-grid"></div>
             </section>
             <section class="slots" id="slots-games" style="display: none;">
                 <h2>Slots</h2>
-                <div class="games-grid">
-                    <!-- 60 Slots Games -->
-                </div>
+                <div class="games-grid"></div>
             </section>
             <section class="sports" id="sports-games" style="display: none;">
                 <h2>Esportes</h2>
-                <div class="games-grid">
-                    <!-- 60 Sports Games -->
-                </div>
+                <div class="games-grid"></div>
             </section>
         </main>
         <main id="form-content" style="display: none;">
@@ -92,51 +83,61 @@
                 <form id="login-form">
                     <h2>Entrar</h2>
                     <div class="form-group">
-                        <label for="username">Usuário:</label>
-                        <input type="text" id="username" name="username" required maxlength="20">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" name="loginEmail" required maxlength="50">
                     </div>
                     <div class="form-group">
-                        <label for="password">Senha:</label>
-                        <input type="password" id="password" name="password" required maxlength="20">
+                        <label for="loginPassword">Senha:</label>
+                        <input type="password" id="loginPassword" name="loginPassword" required maxlength="20">
                     </div>
                     <div class="form-buttons">
-                        <button type="submit" class="btn login">Entrar</button>
+                        <button type="submit" class="btn login" id="loginButton">Entrar</button>
                         <button type="button" class="btn signup" id="show-signup-form">Cadastrar</button>
                     </div>
                 </form>
                 <form id="signup-form" method="POST" action="signup.php" style="display: none;">
                     <h2>Cadastrar</h2>
                     <div class="form-group">
-                        <label for="name">Nome:</label>
-                        <input type="text" id="name" name="name" required>
+                        <label for="signupName">Nome:</label>
+                        <input type="text" id="signupName" name="signupName" required>
                     </div>
                     <div class="form-group">
-                        <label for="pix">PIX:</label>
-                        <input type="text" id="pix" name="pix" required>
+                        <label for="signupPix">PIX:</label>
+                        <input type="text" id="signupPix" name="signupPix" required>
                     </div>
                     <div class="form-group">
-                        <label for="cpf">CPF:</label>
-                        <input type="text" id="cpf" name="cpf" required>
+                        <label for="signupCPF">CPF:</label>
+                        <input type="text" id="signupCPF" name="signupCPF" required>
                     </div>
                     <div class="form-group">
-                        <label for="dob">Data de Nascimento:</label>
-                        <input type="date" id="dob" name="dob" required>
+                        <label for="signupDOB">Data de Nascimento:</label>
+                        <input type="date" id="signupDOB" name="signupDOB" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email:</label>
-                        <input type="email" id="email" name="email" required>
+                        <label for="signupEmail">Email:</label>
+                        <input type="email" id="signupEmail" name="signupEmail" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Telefone:</label>
-                        <input type="tel" id="phone" name="phone" required>
+                        <label for="signupPhone">Telefone:</label>
+                        <input type="tel" id="signupPhone" name="signupPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Senha:</label>
+                        <input type="password" id="signupPassword" name="signupPassword" required maxlength="20">
                     </div>
                     <div class="form-buttons">
-                        <button type="submit" class="btn signup">Cadastrar</button>
+                        <button type="submit" class="btn signup" id="signupButton">Cadastrar</button>
                         <button type="button" class="btn login" id="show-login-form">Entrar</button>
                     </div>
                 </form>
             </div>
         </main>
+    </div>
+    <div id="alert" class="alert" style="display: none;">
+        <div class="alert-content">
+            <p>회원가입이 완료되었습니다!</p>
+            <button id="close-alert" class="btn">확인</button>
+        </div>
     </div>
     <footer>
         <p>&copy; 2024 Black Dice CASINO. Todos os direitos reservados.</p>
@@ -144,34 +145,58 @@
         <p>A Black Dice aceita apenas clientes com mais de 18 anos de idade. Apostar pode ser viciante. Jogue responsavelmente.</p>
     </footer>
 
-    <script>
-        // Get modal elements
-        var mainContent = document.getElementById("main-content");
-        var formContent = document.getElementById("form-content");
-        var loginForm = document.getElementById("login-form");
-        var signupForm = document.getElementById("signup-form");
-        var iframeContainer = document.getElementById("iframe-container");
-        var gameIframe = document.getElementById("game-iframe");
-        var bannerSection = document.getElementById("banner-section");
-        var bannerSlider = document.getElementById("banner-slider");
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
-        // Get open modal buttons
-        var homeBtn = document.getElementById("home-btn");
-        var loginBtn = document.getElementById("login-btn");
-        var signupBtn = document.getElementById("signup-btn");
-        var showSignupFormBtn = document.getElementById("show-signup-form");
-        var showLoginFormBtn = document.getElementById("show-login-form");
+        const firebaseConfig = {
+            apiKey: "AIzaSyDhRkSDgED4xcWTAHvA_bRMhACNIUA1SLQ",
+            authDomain: "blackdice-490e9.firebaseapp.com",
+            projectId: "blackdice-490e9",
+            storageBucket: "blackdice-490e9.appspot.com",
+            messagingSenderId: "468114117476",
+            appId: "1:468114117476:web:626cbb82e7b8a5d72b2071",
+            measurementId: "G-5NEKZ1MRRP"
+        };
 
-        // Get sidebar menu buttons
-        var liveCasinoSidebar = document.getElementById("live-casino-sidebar");
-        var slotsSidebar = document.getElementById("slots-sidebar");
-        var sportsSidebar = document.getElementById("sports-sidebar");
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth();
+        const db = getFirestore(app);
 
-        // Get user info elements
-        var navMenu = document.getElementById("nav-menu");
-        var userInfo = document.getElementById("user-info");
+        const mainContent = document.getElementById("main-content");
+        const formContent = document.getElementById("form-content");
+        const loginForm = document.getElementById("login-form");
+        const signupForm = document.getElementById("signup-form");
+        const iframeContainer = document.getElementById("iframe-container");
+        const gameIframe = document.getElementById("game-iframe");
+        const bannerSection = document.getElementById("banner-section");
 
-        // Listen for open click
+        const homeBtn = document.getElementById("home-btn");
+        const loginBtn = document.getElementById("login-btn");
+        const signupBtn = document.getElementById("signup-btn");
+        const showSignupFormBtn = document.getElementById("show-signup-form");
+        const showLoginFormBtn = document.getElementById("show-login-form");
+
+        const liveCasinoSidebar = document.getElementById("live-casino-sidebar");
+        const slotsSidebar = document.getElementById("slots-sidebar");
+        const sportsSidebar = document.getElementById("sports-sidebar");
+
+        const navMenu = document.getElementById("nav-menu");
+        const userInfo = document.getElementById("user-info");
+        const userName = document.getElementById("user-name");
+        const userBalance = document.getElementById("user-balance");
+
+        const alertBox = document.getElementById("alert");
+        const closeAlertBtn = document.getElementById("close-alert");
+
+        closeAlertBtn.addEventListener("click", () => {
+            alertBox.style.display = "none";
+        });
+
         homeBtn.addEventListener("click", function() {
             mainContent.style.display = "block";
             formContent.style.display = "none";
@@ -181,7 +206,7 @@
             document.getElementById("live-casino-games").style.display = "none";
             document.getElementById("slots-games").style.display = "none";
             document.getElementById("sports-games").style.display = "none";
-            generateGames('popular-games', 12); // Add games to popular games section
+            generateGames('popular-games', 12);
         });
 
         loginBtn.addEventListener("click", function() {
@@ -212,24 +237,91 @@
             loginForm.style.display = "block";
         });
 
-        loginForm.addEventListener("submit", function(event) {
+        document.getElementById('signupButton').addEventListener('click', (event) => {
             event.preventDefault();
-            var username = document.getElementById("username").value;
-            var password = document.getElementById("password").value;
+            const signupEmail = document.getElementById('signupEmail').value;
+            const signupPassword = document.getElementById('signupPassword').value;
+            const signupName = document.getElementById('signupName').value;
+            const signupPix = document.getElementById('signupPix').value;
+            const signupCPF = document.getElementById('signupCPF').value;
+            const signupDOB = document.getElementById('signupDOB').value;
+            const signupPhone = document.getElementById('signupPhone').value;
 
-            if (username === "xxxadm" && password === "xxx") {
-                navMenu.style.display = "none";
-                userInfo.style.display = "flex";
-                showLiveCasino();
+            createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    // Save additional user information in the Firestore
+                    const userRef = doc(db, "users", user.uid);
+                    setDoc(userRef, {
+                        name: signupName,
+                        pix: signupPix,
+                        cpf: signupCPF,
+                        dob: signupDOB,
+                        phone: signupPhone,
+                        balance: 0 // Initialize balance
+                    }).then(() => {
+                        // Show alert and redirect to login form
+                        alertBox.style.display = "block";
+                        signupForm.style.display = "none";
+                        loginForm.style.display = "block";
+                    });
+                })
+                .catch((error) => {
+                    console.error(error.code, error.message);
+                });
+        });
+
+        document.getElementById('loginButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const loginEmail = document.getElementById('loginEmail').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    updateUserInfo(user);
+                    // Redirect to home screen after login
+                    homeBtn.click();
+                })
+                .catch((error) => {
+                    console.error(error.code, error.message);
+                });
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                navMenu.style.display = "flex";
+                userInfo.style.display = "none";
+            }).catch((error) => {
+                console.error(error.code, error.message);
+            });
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                updateUserInfo(user);
             } else {
-                alert("Usuário ou senha incorretos");
+                navMenu.style.display = "flex";
+                userInfo.style.display = "none";
             }
         });
 
-        document.getElementById("logout-btn").addEventListener("click", function() {
-            navMenu.style.display = "flex";
-            userInfo.style.display = "none";
-        });
+        function updateUserInfo(user) {
+            const userRef = doc(db, "users", user.uid);
+            getDoc(userRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    userName.innerText = `${userData.name} 회원님`;
+                    userBalance.innerText = `잔액: ${userData.balance} BRL`;
+                    navMenu.style.display = "none";
+                    userInfo.style.display = "flex";
+                } else {
+                    console.error("No such document!");
+                }
+            }).catch((error) => {
+                console.error(error.code, error.message);
+            });
+        }
 
         function showLiveCasino() {
             mainContent.style.display = "block";
@@ -281,11 +373,43 @@
                     bannerSection.style.display = "none";
                     iframeContainer.style.display = "block";
                     gameIframe.src = videoSrc;
+
+                    gameIframe.onload = function() {
+                        setTimeout(function() {
+                            var iframeDoc = gameIframe.contentDocument || gameIframe.contentWindow.document;
+                            var betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
+                            var userBalanceElement = document.getElementById("user-balance");
+
+                            function decreaseBalance() {
+                                var balance = parseFloat(userBalanceElement.innerText.replace('잔액: ', '').replace(' BRL', '').replace(/\./g, '').replace(',', '.'));
+                                balance -= 1;
+                                userBalanceElement.innerText = '잔액: ' + balance.toLocaleString('pt-BR') + ' BRL';
+                            }
+
+                            function attachClickListeners() {
+                                var paths = betBoardWrapper.querySelectorAll("path");
+                                paths.forEach(function(path) {
+                                    path.addEventListener("click", decreaseBalance);
+                                });
+                            }
+
+                            if (betBoardWrapper) {
+                                attachClickListeners();
+                            } else {
+                                var interval = setInterval(function() {
+                                    betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
+                                    if (betBoardWrapper) {
+                                        attachClickListeners();
+                                        clearInterval(interval);
+                                    }
+                                }, 1000);
+                            }
+                        }, 3000);
+                    };
                 });
             });
         }
 
-        // Initialize games on page load
         generateGames('popular-games', 12);
         generateGames('live-casino-games', 60);
         generateGames('slots-games', 60);
@@ -316,7 +440,6 @@
             document.getElementById("slots-games").style.display = "none";
             document.getElementById("sports-games").style.display = "block";
         });
-
     </script>
 </body>
 </html>
