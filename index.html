@@ -23,7 +23,7 @@
             </ul>
             <ul id="user-info" style="display: none;">
                 <li><span id="user-name"></span>, <span id="user-balance"></span></li>
-                <li><a href="#" class="btn deposit">Depositar</a></li>
+                <li><a href="#" class="btn deposit" id="depositar-btn">Depositar</a></li>
                 <li><a href="#" class="btn logout" id="logout-btn">Logout</a></li>
             </ul>
         </nav>
@@ -37,25 +37,19 @@
                 <li><a href="#">Black Dice</a></li>
                 <li><a href="#">Bônus</a></li>
                 <li><a href="#">Suporte</a></li>
+                <li><a href="#">Saque PIX</a></li>
+                <li><a href="#">Suporte Ao Vivo</a></li>
+                <li><a href="#">Promoções</a></li>
+                <li><a href="#">Indique Um Amigo</a></li>
+                <li><a href="#">Patrocínios</a></li>
             </ul>
         </aside>
         <main id="main-content">
             <section class="banner" id="banner-section">
-                <div class="banner-slider" id="banner-slider">
-                    <div class="slide">
-                        <img src="banner2.png" alt="Banner 1">
-                        <div class="banner-text">
-                            <h1>Promoção Imperdível!</h1>
-                            <p>Ganhe até 500% de bônus!</p>
-                        </div>
-                    </div>
-                    <div class="slide">
-                        <img src="banner2.png" alt="Banner 2">
-                        <div class="banner-text">
-                            <h1>Giros Grátis</h1>
-                            <p>Até 100 giros grátis em slots!</p>
-                        </div>
-                    </div>
+                <div class="banner-content">
+                    <h1>Promoção Imperdível!</h1>
+                    <p>Ganhe até 500% de bônus!</p>
+                    <a href="#" class="btn play-now">Jogar Agora</a>
                 </div>
             </section>
             <section class="iframe-container" id="iframe-container" style="display: none;">
@@ -133,14 +127,34 @@
             </div>
         </main>
     </div>
+    <div id="deposit-modal" class="modal">
+        <div class="modal-content">
+            <div class="logo">BLACK DICE</div>
+            <div class="modal-body">
+                <label for="deposit-amount">Digite o valor:</label>
+                <input type="number" id="deposit-amount" maxlength="20">
+                <button id="btn-60" class="btn">60</button>
+                <button id="btn-240" class="btn">240</button>
+                <button id="btn-600" class="btn">600</button>
+                <button id="btn-digitar" class="btn">Digitar</button>
+                <button id="generate-code-btn" class="btn">GERAR CODIGO</button>
+            </div>
+        </div>
+    </div>
     <div id="alert" class="alert" style="display: none;">
         <div class="alert-content">
-            <p>Cadastrado com sucesso!</p>
+            <p>회원가입이 완료되었습니다!</p>
             <button id="close-alert" class="btn">확인</button>
         </div>
     </div>
     <footer>
-        <p>&copy; 2024 Black Dice CASINO. Todos os direitos reservados.</p>
+        <div class="footer-content">
+            <p>Suporte: <a href="mailto:support@blackdice.com">support@blackdice.com</a> | 
+            Parceiros: <a href="mailto:partners@blackdice.com">partners@blackdice.com</a> | 
+            Jurídico: <a href="mailto:legal@blackdice.com">legal@blackdice.com</a> | 
+            Imprensa: <a href="mailto:press@blackdice.com">press@blackdice.com</a></p>
+        </div>
+        <p>&copy; 2024 Black Dice. Todos os direitos reservados.</p>
         <p>A Prolific Trade N.V. é licenciada e regulamentada pela Antillephone N.V, sob a licença nº 8048/JAZ2024-009</p>
         <p>A Black Dice aceita apenas clientes com mais de 18 anos de idade. Apostar pode ser viciante. Jogue responsavelmente.</p>
     </footer>
@@ -311,8 +325,8 @@
             getDoc(userRef).then((docSnap) => {
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
-                    userName.innerText = `${userData.name} 회원님`;
-                    userBalance.innerText = `잔액: ${userData.balance} BRL`;
+                    userName.innerText = `${userData.name} usuario`;
+                    userBalance.innerText = `Saldo : ${userData.balance} BRL`;
                     navMenu.style.display = "none";
                     userInfo.style.display = "flex";
                 } else {
@@ -359,7 +373,7 @@
                     <img src="image${i % 60 + 1}.png" alt="${gameNames[i % gameNames.length]}">
                     <h3>${gameNames[i % gameNames.length]}</h3>
                     <div class="game-buttons">
-                        <a href="javascript:void(0)" class="btn small play-now" data-video="https://5cb650433a.icsobdjtjn.net/gs2c/playGame.do?key=token%3Dbf8f7ace608a40f3af06c8fbf1b271e6%60%7C%60symbol%3D441%60%7C%60technology%3DH5%60%7C%60platform%3DWEB%60%7C%60language%3Dpt%60%7C%60currency%3DBRL%60%7C%60cashierUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Foffice%2Frecharge%2F%60%7C%60lobbyUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Fcasino&ppkv=2&stylename=1xbet_sw&rcCloseUrl=https://br.1xbet.com/casino&isGameUrlApiCalled=true">Jogar Agora</a>
+                        <a href="https://5cb650433a.icsobdjtjn.net/gs2c/playGame.do?key=token%3De17daefca5424fc2a90b4589a97e2443%60%7C%60symbol%3D441%60%7C%60technology%3DH5%60%7C%60platform%3DWEB%60%7C%60language%3Dpt%60%7C%60currency%3DBRL%60%7C%60cashierUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Foffice%2Frecharge%2F%60%7C%60lobbyUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Fcasino&ppkv=2&stylename=1xbet_sw&rcCloseUrl=https://br.1xbet.com/casino&isGameUrlApiCalled=true" class="btn small play-now">Jogar Agora</a>
                         <a href="#" class="btn small">Demo</a>
                     </div>
                 `;
@@ -381,9 +395,9 @@
                             var userBalanceElement = document.getElementById("user-balance");
 
                             function decreaseBalance() {
-                                var balance = parseFloat(userBalanceElement.innerText.replace('잔액: ', '').replace(' BRL', '').replace(/\./g, '').replace(',', '.'));
+                                var balance = parseFloat(userBalanceElement.innerText.replace('Saldo : ', '').replace(' BRL', '').replace(/\./g, '').replace(',', '.'));
                                 balance -= 1;
-                                userBalanceElement.innerText = '잔액: ' + balance.toLocaleString('pt-BR') + ' BRL';
+                                userBalanceElement.innerText = 'Saldo : ' + balance.toLocaleString('pt-BR') + ' BRL';
                             }
 
                             function attachClickListeners() {
@@ -440,6 +454,52 @@
             document.getElementById("slots-games").style.display = "none";
             document.getElementById("sports-games").style.display = "block";
         });
+
+        // Deposit functionality
+        const depositBtn = document.getElementById('depositar-btn');
+        const depositModal = document.getElementById('deposit-modal');
+        const generateCodeBtn = document.getElementById('generate-code-btn');
+        const btn60 = document.getElementById('btn-60');
+        const btn240 = document.getElementById('btn-240');
+        const btn600 = document.getElementById('btn-600');
+        const btnDigitar = document.getElementById('btn-digitar');
+
+        depositBtn.addEventListener('click', () => {
+            depositModal.style.display = 'flex';
+        });
+
+        generateCodeBtn.addEventListener('click', () => {
+            depositModal.classList.add('fade-out');
+            setTimeout(() => {
+                depositModal.style.display = 'none';
+                depositModal.classList.remove('fade-out');
+            }, 1000);
+        });
+
+        btn60.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/xkGEzKfr');
+        });
+
+        btn240.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/vnbMclNE');
+        });
+
+        btn600.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/yBETjUdn');
+        });
+
+        btnDigitar.addEventListener('click', () => {
+            document.getElementById('deposit-amount').focus();
+        });
+
+        function openPixWindow(url) {
+            const newWindow = window.open(url, 'PIX Window', 'width=600,height=600');
+            newWindow.onload = () => {
+                newWindow.document.body.style.display = 'flex';
+                newWindow.document.body.style.justifyContent = 'center';
+                newWindow.document.body.style.alignItems = 'center';
+            };
+        }
     </script>
 </body>
 </html>
