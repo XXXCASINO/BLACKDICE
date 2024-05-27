@@ -18,7 +18,7 @@ header {
 }
 
 .logo {
-    font-size: 24px;
+    font-size: 35px;
     font-weight: bold;
     color: #e50914;
 }
@@ -33,20 +33,20 @@ nav ul {
 nav ul#user-info {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 35px; /* 15포인트 추가 */
 }
 
 nav ul#user-info li {
-    color: #ffffff;
+    color: #ffd700;
 }
 
 nav ul#user-info li a.btn {
     background-color: #e50914;
-    color: #000000;
+    color: #ffffff;
     padding: 10px 20px;
     border-radius: 5px;
     font-size: 14px;
-    font-weight: bold;
+    font-weight: normal;
     text-decoration: none;
 }
 
@@ -72,6 +72,8 @@ nav ul#nav-menu li a:hover {
 nav ul#nav-menu li a.btn {
     background-color: #e50914;
     color: #ffffff;
+    font-family: Arial, sans-serif;
+    font-weight: normal;
 }
 
 nav ul#nav-menu li a.btn:hover {
@@ -84,9 +86,12 @@ nav ul#nav-menu li a.btn:hover {
 }
 
 .sidebar {
-    width: 200px;
+    width: 250px;
     background-color: #1f1f1f;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .sidebar ul {
@@ -112,6 +117,64 @@ nav ul#nav-menu li a.btn:hover {
 .sidebar ul li a:hover {
     color: #e50914;
     background-color: #333333;
+}
+
+.chat-board {
+    border: 1px solid #e50914;
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.chat-messages {
+    height: 150px;
+    overflow-y: auto;
+    background-color: #121212;
+    padding: 10px;
+    border: 1px solid #e50914;
+    border-radius: 5px;
+    font-size: 8pt;
+    color: red;
+}
+
+.chat-input-container {
+    display: flex;
+    margin-top: 10px;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #e50914;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #ffffff;
+    font-size: 8pt;
+}
+
+#chat-send {
+    background-color: #e50914;
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 8pt;
+    text-decoration: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#chat-send:hover {
+    background-color: #ff1e2d;
+}
+
+.online-count {
+    font-size: 12px;
+    color: #ffffff;
+    text-align: center;
+    margin-bottom: 10px;
+    background-color: #1f1f1f;
+    padding: 10px;
+    border-radius: 5px;
 }
 
 main {
@@ -388,3 +451,4 @@ footer p {
         opacity: 0;
     }
 }
+
