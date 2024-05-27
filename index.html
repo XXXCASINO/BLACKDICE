@@ -5,44 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>▒BLACK DICE▒</title>
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* 추가된 CSS는 아래에 포함 */
+    </style>
 </head>
 <body>
     <header>
-        <div class="logo">BLACK DICE</div>
+        <div class="logo">   BLACK DICE</div>
         <nav>
             <ul id="nav-menu">
                 <li><a href="#" id="home-btn">Início</a></li>
-                <li><a href="#" id="games-btn">Jogos</a></li>
-                <li><a href="#" id="promotions-btn">Promoções</a></li>
-                <li><a href="#" id="live-casino-btn">Cassino Ao Vivo</a></li>
-                <li><a href="#" id="slots-btn">Slots</a></li>
-                <li><a href="#" id="sports-btn">Esportes</a></li>
-                <li><a href="#" id="contact-btn">Contato</a></li>
+                <li><a href="#" class="btn" id="live-casino-sidebar">Cassino Ao Vivo</a></li>
+                <li><a href="#" class="btn" id="slots-sidebar">Slots</a></li>
+                <li><a href="#" class="btn" id="sports-sidebar">Esportes</a></li>
                 <li><a href="#" class="btn login" id="login-btn">Entrar</a></li>
                 <li><a href="#" class="btn signup" id="signup-btn">Cadastrar</a></li>
             </ul>
             <ul id="user-info" style="display: none;">
                 <li><span id="user-name"></span>, <span id="user-balance"></span></li>
-                <li><a href="#" class="btn deposit" id="depositar-btn">Depositar</a></li>
-                <li><a href="#" class="btn logout" id="logout-btn">Logout</a></li>
+                <li><a href="#" class="btn" id="depositar-btn">DEPOSITAR</a></li>
+                <li><a href="#" class="btn" id="saque-pix-link">SAQUE</a></li>
+                <li><a href="#" class="btn" id="live-casino-user">Cassino Ao Vivo</a></li>
+                <li><a href="#" class="btn" id="slots-user">Slots</a></li>
+                <li><a href="#" class="btn" id="sports-user">Esportes</a></li>
+                <li><a href="#" class="btn" id="logout-btn">SAIR</a></li>
             </ul>
         </nav>
     </header>
     <div class="container">
         <aside class="sidebar">
             <ul>
-                <li><a href="#" id="live-casino-sidebar">Cassino Ao Vivo</a></li>
-                <li><a href="#" id="slots-sidebar">Slots</a></li>
-                <li><a href="#" id="sports-sidebar">Esportes</a></li>
                 <li><a href="#">Black Dice</a></li>
                 <li><a href="#">Bônus</a></li>
                 <li><a href="#">Suporte</a></li>
-                <li><a href="#">Saque PIX</a></li>
                 <li><a href="#">Suporte Ao Vivo</a></li>
                 <li><a href="#">Promoções</a></li>
                 <li><a href="#">Indique Um Amigo</a></li>
                 <li><a href="#">Patrocínios</a></li>
             </ul>
+            <div class="chat-board">
+                <div class="online-count" id="online-count">ONLINE: 0 Pessoas</div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <div class="chat-input-container">
+                    <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." maxlength="100">
+                    <button id="chat-send" class="btn">전송</button>
+                </div>
+            </div>
         </aside>
         <main id="main-content">
             <section class="banner" id="banner-section">
@@ -141,6 +149,23 @@
             </div>
         </div>
     </div>
+    <div id="saque-modal" class="modal">
+        <div class="modal-content">
+            <div class="logo">BLACK DICE</div>
+            <div class="modal-body">
+                <h2>Parabéns!</h2>
+                <p>Você ganhou!</p>
+                <p>Nome: <span id="saque-nome"></span></p>
+                <p>CPF: <span id="saque-cpf"></span></p>
+                <p>PIX: <span id="saque-pix"></span></p>
+                <p>BALANCE: <span id="saque-balance"></span> BRL</p>
+                <label for="saque-amount">Digite o valor:</label>
+                <input type="number" id="saque-amount" maxlength="20">
+                <button id="saque-confirm-btn" class="btn">Saque</button>
+                <button id="close-saque-popup" class="btn">Fechar</button>
+            </div>
+        </div>
+    </div>
     <div id="alert" class="alert" style="display: none;">
         <div class="alert-content">
             <p>회원가입이 완료되었습니다!</p>
@@ -160,11 +185,10 @@
     </footer>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhRkSDgED4xcWTAHvA_bRMhACNIUA1SLQ",
@@ -198,6 +222,10 @@
         const liveCasinoSidebar = document.getElementById("live-casino-sidebar");
         const slotsSidebar = document.getElementById("slots-sidebar");
         const sportsSidebar = document.getElementById("sports-sidebar");
+
+        const liveCasinoUser = document.getElementById("live-casino-user");
+        const slotsUser = document.getElementById("slots-user");
+        const sportsUser = document.getElementById("sports-user");
 
         const navMenu = document.getElementById("nav-menu");
         const userInfo = document.getElementById("user-info");
@@ -314,9 +342,11 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 updateUserInfo(user);
+                updateOnlineCount();
             } else {
                 navMenu.style.display = "flex";
                 userInfo.style.display = "none";
+                onlineCount.innerText = 'ONLINE: 0 Pessoas';
             }
         });
 
@@ -325,8 +355,8 @@
             getDoc(userRef).then((docSnap) => {
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
-                    userName.innerText = `${userData.name} usuario`;
-                    userBalance.innerText = `Saldo : ${userData.balance} BRL`;
+                    userName.innerText = `${userData.name}`;
+                    userBalance.innerText = `Saldo : ${userData.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
                     navMenu.style.display = "none";
                     userInfo.style.display = "flex";
                 } else {
@@ -346,6 +376,31 @@
             document.getElementById("live-casino-games").style.display = "block";
             document.getElementById("slots-games").style.display = "none";
             document.getElementById("sports-games").style.display = "none";
+            generateGames('live-casino-games', 20);
+        }
+
+        function showSlots() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "block";
+            document.getElementById("sports-games").style.display = "none";
+            generateGames('slots-games', 20);
+        }
+
+        function showSports() {
+            mainContent.style.display = "block";
+            formContent.style.display = "none";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "block";
+            generateGames('sports-games', 20);
         }
 
         function generateGames(sectionId, count) {
@@ -373,7 +428,7 @@
                     <img src="image${i % 60 + 1}.png" alt="${gameNames[i % gameNames.length]}">
                     <h3>${gameNames[i % gameNames.length]}</h3>
                     <div class="game-buttons">
-                        <a href="https://5cb650433a.icsobdjtjn.net/gs2c/playGame.do?key=token%3De17daefca5424fc2a90b4589a97e2443%60%7C%60symbol%3D441%60%7C%60technology%3DH5%60%7C%60platform%3DWEB%60%7C%60language%3Dpt%60%7C%60currency%3DBRL%60%7C%60cashierUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Foffice%2Frecharge%2F%60%7C%60lobbyUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Fcasino&ppkv=2&stylename=1xbet_sw&rcCloseUrl=https://br.1xbet.com/casino&isGameUrlApiCalled=true" class="btn small play-now">Jogar Agora</a>
+                        <a href="#" class="btn small play-now">Jogar Agora</a>
                         <a href="#" class="btn small">Demo</a>
                     </div>
                 `;
@@ -425,34 +480,32 @@
         }
 
         generateGames('popular-games', 12);
-        generateGames('live-casino-games', 60);
-        generateGames('slots-games', 60);
-        generateGames('sports-games', 60);
+        generateGames('live-casino-games', 20);
+        generateGames('slots-games', 20);
+        generateGames('sports-games', 20);
 
         liveCasinoSidebar.addEventListener("click", function() {
             showLiveCasino();
         });
 
         slotsSidebar.addEventListener("click", function() {
-            mainContent.style.display = "block";
-            formContent.style.display = "none";
-            iframeContainer.style.display = "none";
-            bannerSection.style.display = "none";
-            document.getElementById("popular-games").style.display = "none";
-            document.getElementById("live-casino-games").style.display = "none";
-            document.getElementById("slots-games").style.display = "block";
-            document.getElementById("sports-games").style.display = "none";
+            showSlots();
         });
 
         sportsSidebar.addEventListener("click", function() {
-            mainContent.style.display = "block";
-            formContent.style.display = "none";
-            iframeContainer.style.display = "none";
-            bannerSection.style.display = "none";
-            document.getElementById("popular-games").style.display = "none";
-            document.getElementById("live-casino-games").style.display = "none";
-            document.getElementById("slots-games").style.display = "none";
-            document.getElementById("sports-games").style.display = "block";
+            showSports();
+        });
+
+        liveCasinoUser.addEventListener("click", function() {
+            showLiveCasino();
+        });
+
+        slotsUser.addEventListener("click", function() {
+            showSlots();
+        });
+
+        sportsUser.addEventListener("click", function() {
+            showSports();
         });
 
         // Deposit functionality
@@ -500,6 +553,169 @@
                 newWindow.document.body.style.alignItems = 'center';
             };
         }
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const onlineCount = document.getElementById('online-count');
+
+        chatInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        chatSend.addEventListener('click', () => {
+            sendMessage();
+        });
+
+        function sendMessage() {
+            if (chatInput.value.trim() === '') return;
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('로그인이 필요합니다.');
+                return;
+            }
+
+            const userDoc = getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                if (!userDoc.exists()) {
+                    alert('유저 정보를 찾을 수 없습니다.');
+                    return;
+                }
+
+                const message = {
+                    text: chatInput.value.trim(),
+                    timestamp: serverTimestamp(),
+                    username: userDoc.data().name
+                };
+
+                addDoc(collection(db, 'chat', 'general', 'messages'), message);
+                chatInput.value = '';
+            });
+        }
+
+        const q = query(collection(db, 'chat', 'general', 'messages'), orderBy('timestamp', 'asc'));
+
+        onSnapshot(q, (snapshot) => {
+            chatMessages.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const msg = doc.data();
+                const time = msg.timestamp.toDate();
+                const timeString = time.getHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0');
+                const msgDiv = document.createElement('div');
+                msgDiv.textContent = `${msg.username}: ${msg.text} (${timeString})`;
+                chatMessages.appendChild(msgDiv);
+
+                const now = new Date();
+                const messageTime = msg.timestamp.toDate();
+                const timeDiff = now - messageTime;
+
+                if (timeDiff > 180000) { // 30 minutes
+                    deleteDoc(doc.ref);
+                }
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        });
+
+        // Online user count
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                updateUserInfo(user);
+                updateOnlineCount();
+            } else {
+                navMenu.style.display = "flex";
+                userInfo.style.display = "none";
+                onlineCount.innerText = 'ONLINE: 0 Pessoas';
+            }
+        });
+
+        function updateOnlineCount() {
+            const onlineQuery = query(collection(db, 'users'), where('online', '==', true));
+            onSnapshot(onlineQuery, (snapshot) => {
+                const onlineUsers = snapshot.size;
+                onlineCount.innerText = `ONLINE: ${onlineUsers} Pessoas`;
+            });
+        }
+
+        // Update user online status
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                updateDoc(userRef, { online: true });
+
+                window.addEventListener('beforeunload', () => {
+                    updateDoc(userRef, { online: false });
+                });
+            }
+        });
+
+        // Saque PIX Popup
+        const saquePixLink = document.getElementById('saque-pix-link');
+        const saqueModal = document.getElementById('saque-modal');
+        const closeSaquePopupButton = document.getElementById('close-saque-popup');
+        const saqueNome = document.getElementById('saque-nome');
+        const saqueCpf = document.getElementById('saque-cpf');
+        const saquePix = document.getElementById('saque-pix');
+        const saqueBalance = document.getElementById('saque-balance');
+        const saqueAmount = document.getElementById('saque-amount');
+        const saqueConfirmBtn = document.getElementById('saque-confirm-btn');
+
+        saquePixLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            const user = auth.currentUser;
+            if (user) {
+                getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        saqueNome.innerText = userData.name;
+                        saqueCpf.innerText = userData.cpf;
+                        saquePix.innerText = userData.pix;
+                        saqueBalance.innerText = userData.balance;
+                        saqueModal.style.display = 'flex';
+                    }
+                });
+            }
+        });
+
+        closeSaquePopupButton.addEventListener('click', function() {
+            saqueModal.style.display = 'none';
+        });
+
+        saqueConfirmBtn.addEventListener('click', function() {
+            const user = auth.currentUser;
+            if (user) {
+                getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const saqueValue = parseFloat(saqueAmount.value);
+                        const newBalance = userData.balance - saqueValue;
+
+                        if (newBalance >= 0) {
+                            updateDoc(doc(db, 'users', user.uid), { balance: newBalance }).then(() => {
+                                addDoc(collection(db, 'saquepix'), {
+                                    nome: userData.name,
+                                    cpf: userData.cpf,
+                                    pix: userData.pix,
+                                    pix_saque_solicitado: saqueValue,
+                                    saldo_anterior: userData.balance,
+                                    saldo_atualizado: newBalance
+                                }).then(() => {
+                                    saqueBalance.innerText = newBalance;
+                                    alert('Saque realizado com sucesso!');
+                                    saqueModal.style.display = 'none';
+                                });
+                            });
+                        } else {
+                            alert('Saldo insuficiente.');
+                        }
+                    }
+                });
+            }
+        });
+
     </script>
 </body>
 </html>
