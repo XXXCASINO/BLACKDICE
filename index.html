@@ -3,61 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>▒BLACK DICE▒</title>
+    <title>▒▒▒▒ BLACK DICE ▒▒▒▒</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* 추가된 CSS는 아래에 포함 */
-    </style>
 </head>
 <body>
     <header>
-        <div class="logo">   BLACK DICE</div>
+        <div class="logo">▒ BLACK DICE ▒</div>
         <nav>
             <ul id="nav-menu">
                 <li><a href="#" id="home-btn">Início</a></li>
-                <li><a href="#" class="btn" id="live-casino-sidebar">Cassino Ao Vivo</a></li>
-                <li><a href="#" class="btn" id="slots-sidebar">Slots</a></li>
-                <li><a href="#" class="btn" id="sports-sidebar">Esportes</a></li>
-                <li><a href="#" class="btn login" id="login-btn">Entrar</a></li>
-                <li><a href="#" class="btn signup" id="signup-btn">Cadastrar</a></li>
+                <li><a href="#" class="btn login" id="login-btn">ENTRAR</a></li>
+                <li><a href="#" class="btn signup" id="signup-btn">CADASTRAR</a></li>
             </ul>
             <ul id="user-info" style="display: none;">
+                <li><a href="#" id="live-casino-sidebar">Cassino Ao Vivo</a></li>
+                <li><a href="#" id="slots-sidebar">Slots</a></li>
+                <li><a href="#" id="sports-sidebar">Esportes</a></li>
                 <li><span id="user-name"></span>, <span id="user-balance"></span></li>
                 <li><a href="#" class="btn" id="depositar-btn">DEPOSITAR</a></li>
                 <li><a href="#" class="btn" id="saque-pix-link">SAQUE</a></li>
-                <li><a href="#" class="btn" id="live-casino-user">Cassino Ao Vivo</a></li>
-                <li><a href="#" class="btn" id="slots-user">Slots</a></li>
-                <li><a href="#" class="btn" id="sports-user">Esportes</a></li>
                 <li><a href="#" class="btn" id="logout-btn">SAIR</a></li>
             </ul>
         </nav>
     </header>
     <div class="container">
         <aside class="sidebar">
-            <ul>
-                <li><a href="#">Black Dice</a></li>
-                <li><a href="#">Bônus</a></li>
-                <li><a href="#">Suporte</a></li>
-                <li><a href="#">Suporte Ao Vivo</a></li>
-                <li><a href="#">Promoções</a></li>
-                <li><a href="#">Indique Um Amigo</a></li>
-                <li><a href="#">Patrocínios</a></li>
-            </ul>
             <div class="chat-board">
-                <div class="online-count" id="online-count">ONLINE: 0 Pessoas</div>
+                <div class="online-count" id="online-count">ONLINE: 0 Pessoa(s)</div>
                 <div class="chat-messages" id="chat-messages"></div>
                 <div class="chat-input-container">
-                    <input type="text" id="chat-input" placeholder="메시지를 입력하세요..." maxlength="100">
-                    <button id="chat-send" class="btn">전송</button>
+                    <input type="text" id="chat-input" placeholder="Digite..." maxlength="100">
+                    <button id="chat-send" class="btn">ENTER</button>
                 </div>
             </div>
+            <ul>
+                <li><a href="#" id="black-dice">Black Dice</a></li>
+                <li><a href="#" id="bonus">Bônus</a></li>
+                <li><a href="#" id="suporte">Suporte</a></li>
+                <li><a href="#" id="suporte-ao-vivo">Suporte Ao Vivo</a></li>
+                <li><a href="#" id="promocoes">Promoções</a></li>
+                <li><a href="#" id="indique-um-amigo">Indique Um Amigo</a></li>
+                <li><a href="#" id="patrocinios">Patrocínios</a></li>
+            </ul>
         </aside>
         <main id="main-content">
             <section class="banner" id="banner-section">
                 <div class="banner-content">
                     <h1>Promoção Imperdível!</h1>
                     <p>Ganhe até 500% de bônus!</p>
-                    <a href="#" class="btn play-now">Jogar Agora</a>
+                    <a href="#" class="btn play-now" id="jogar-agora">Jogar Agora</a>
                 </div>
             </section>
             <section class="iframe-container" id="iframe-container" style="display: none;">
@@ -78,6 +72,11 @@
             <section class="sports" id="sports-games" style="display: none;">
                 <h2>Esportes</h2>
                 <div class="games-grid"></div>
+            </section>
+            <section class="content" id="content-section" style="display: none;">
+                <h2 id="content-title"></h2>
+                <h3 id="content-slogan"></h3>
+                <p id="content-description"></p>
             </section>
         </main>
         <main id="form-content" style="display: none;">
@@ -160,7 +159,7 @@
                 <p>PIX: <span id="saque-pix"></span></p>
                 <p>BALANCE: <span id="saque-balance"></span> BRL</p>
                 <label for="saque-amount">Digite o valor:</label>
-                <input type="number" id="saque-amount" maxlength="20">
+                <input type="number" id="saque-amount" maxlength="20" style="font-size: 10px;">
                 <button id="saque-confirm-btn" class="btn">Saque</button>
                 <button id="close-saque-popup" class="btn">Fechar</button>
             </div>
@@ -168,27 +167,26 @@
     </div>
     <div id="alert" class="alert" style="display: none;">
         <div class="alert-content">
-            <p>회원가입이 완료되었습니다!</p>
-            <button id="close-alert" class="btn">확인</button>
+            <p>cadastro com sucesso!</p>
+            <button id="close-alert" class="btn">Confirmar</button>
         </div>
     </div>
-    <footer>
-        <div class="footer-content">
-            <p>Suporte: <a href="mailto:support@blackdice.com">support@blackdice.com</a> | 
-            Parceiros: <a href="mailto:partners@blackdice.com">partners@blackdice.com</a> | 
-            Jurídico: <a href="mailto:legal@blackdice.com">legal@blackdice.com</a> | 
-            Imprensa: <a href="mailto:press@blackdice.com">press@blackdice.com</a></p>
-        </div>
+    <footer class="fixed-footer">
+    </footer>
+    <footer class="footer-content">
+        <p>Suporte: <a href="mailto:support@blackdice.com">support@blackdice.com</a> | 
+        Parceiros: <a href="mailto:partners@blackdice.com">partners@blackdice.com</a> | 
+        Jurídico: <a href="mailto:legal@blackdice.com">legal@blackdice.com</a> | 
+        Imprensa: <a href="mailto:press@blackdice.com">press@blackdice.com</a></p>
         <p>&copy; 2024 Black Dice. Todos os direitos reservados.</p>
         <p>A Prolific Trade N.V. é licenciada e regulamentada pela Antillephone N.V, sob a licença nº 8048/JAZ2024-009</p>
         <p>A Black Dice aceita apenas clientes com mais de 18 anos de idade. Apostar pode ser viciante. Jogue responsavelmente.</p>
     </footer>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDhRkSDgED4xcWTAHvA_bRMhACNIUA1SLQ",
@@ -223,9 +221,13 @@
         const slotsSidebar = document.getElementById("slots-sidebar");
         const sportsSidebar = document.getElementById("sports-sidebar");
 
-        const liveCasinoUser = document.getElementById("live-casino-user");
-        const slotsUser = document.getElementById("slots-user");
-        const sportsUser = document.getElementById("sports-user");
+        const blackDice = document.getElementById("black-dice");
+        const bonus = document.getElementById("bonus");
+        const suporte = document.getElementById("suporte");
+        const suporteAoVivo = document.getElementById("suporte-ao-vivo");
+        const promocoes = document.getElementById("promocoes");
+        const indiqueUmAmigo = document.getElementById("indique-um-amigo");
+        const patrocinios = document.getElementById("patrocinios");
 
         const navMenu = document.getElementById("nav-menu");
         const userInfo = document.getElementById("user-info");
@@ -235,12 +237,70 @@
         const alertBox = document.getElementById("alert");
         const closeAlertBtn = document.getElementById("close-alert");
 
+        const contentSection = document.getElementById("content-section");
+        const contentTitle = document.getElementById("content-title");
+        const contentSlogan = document.getElementById("content-slogan");
+        const contentDescription = document.getElementById("content-description");
+
+        const sections = {
+            "black-dice": {
+                title: "Black Dice",
+                slogan: "O Melhor do Jogo",
+                description: "Descubra a emoção dos nossos jogos exclusivos."
+            },
+            "bonus": {
+                title: "Bônus",
+                slogan: "Ganhe Mais",
+                description: "Aproveite nossos bônus incríveis para aumentar suas chances de ganhar."
+            },
+            "suporte": {
+                title: "Suporte",
+                slogan: "Estamos Aqui Para Ajudar",
+                description: "Nossa equipe de suporte está disponível 24/7 para assisti-lo."
+            },
+            "suporte-ao-vivo": {
+                title: "Suporte Ao Vivo",
+                slogan: "Ajuda Imediata",
+                description: "Converse com nossa equipe de suporte ao vivo para resolver seus problemas instantaneamente."
+            },
+            "promocoes": {
+                title: "Promoções",
+                slogan: "Ofertas Imperdíveis",
+                description: "Confira nossas promoções e ofertas especiais."
+            },
+            "indique-um-amigo": {
+                title: "Indique Um Amigo",
+                slogan: "Compartilhe a Diversão",
+                description: "Indique um amigo e ganhe recompensas incríveis."
+            },
+            "patrocinios": {
+                title: "Patrocínios",
+                slogan: "Nossos Parceiros",
+                description: "Conheça nossos parceiros e patrocinadores."
+            }
+        };
+
+        function showContent(section) {
+            const sectionData = sections[section];
+            if (sectionData) {
+                contentTitle.innerText = sectionData.title;
+                contentSlogan.innerText = sectionData.slogan;
+                contentDescription.innerText = sectionData.description;
+                contentSection.style.display = "block";
+                mainContent.style.display = "none";
+                formContent.style.display = "none";
+                iframeContainer.style.display = "none";
+                bannerSection.style.display = "none";
+            }
+        }
+
         closeAlertBtn.addEventListener("click", () => {
             alertBox.style.display = "none";
         });
 
         homeBtn.addEventListener("click", function() {
             mainContent.style.display = "block";
+            contentSection.style.display = "none";
             formContent.style.display = "none";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "block";
@@ -253,6 +313,7 @@
 
         loginBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
+            contentSection.style.display = "none";
             formContent.style.display = "flex";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
@@ -262,6 +323,7 @@
 
         signupBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
+            contentSection.style.display = "none";
             formContent.style.display = "flex";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
@@ -346,7 +408,7 @@
             } else {
                 navMenu.style.display = "flex";
                 userInfo.style.display = "none";
-                onlineCount.innerText = 'ONLINE: 0 Pessoas';
+                onlineCount.innerText = 'ONLINE: 0 Pessoa(s)';
             }
         });
 
@@ -369,6 +431,7 @@
 
         function showLiveCasino() {
             mainContent.style.display = "block";
+            contentSection.style.display = "none";
             formContent.style.display = "none";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
@@ -381,6 +444,7 @@
 
         function showSlots() {
             mainContent.style.display = "block";
+            contentSection.style.display = "none";
             formContent.style.display = "none";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
@@ -393,6 +457,7 @@
 
         function showSports() {
             mainContent.style.display = "block";
+            contentSection.style.display = "none";
             formContent.style.display = "none";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
@@ -437,9 +502,13 @@
 
             var playNowButtons = document.querySelectorAll(".play-now");
             playNowButtons.forEach(function(button) {
-                button.addEventListener("click", function() {
-                    var videoSrc = this.getAttribute("data-video");
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const videoSrc = "https://login-mit.onegameslink.com/GameLauncher?casino=softswiss.cur3&clientPlatform=web&clientType=live&currency=BRL&depositUrl=https%3A%2F%2Fblaze.com%2F%3Fmodal%3Dcashier%26type%3Ddeposit&externalToken=44ab5ef7-f72d-4028-b0ee-e75cb9411cad&gameCodeName=ubal&language=pt&lobbyUrl=https%3A%2F%2Fblaze.com&tableAlias=bal_minibaccarat&username=1561056041";
                     bannerSection.style.display = "none";
+                    contentSection.style.display = "none";
+                    formContent.style.display = "none";
+                    mainContent.style.display = "none";
                     iframeContainer.style.display = "block";
                     gameIframe.src = videoSrc;
 
@@ -496,16 +565,32 @@
             showSports();
         });
 
-        liveCasinoUser.addEventListener("click", function() {
-            showLiveCasino();
+        blackDice.addEventListener("click", function() {
+            showContent("black-dice");
         });
 
-        slotsUser.addEventListener("click", function() {
-            showSlots();
+        bonus.addEventListener("click", function() {
+            showContent("bonus");
         });
 
-        sportsUser.addEventListener("click", function() {
-            showSports();
+        suporte.addEventListener("click", function() {
+            showContent("suporte");
+        });
+
+        suporteAoVivo.addEventListener("click", function() {
+            showContent("suporte-ao-vivo");
+        });
+
+        promocoes.addEventListener("click", function() {
+            showContent("promocoes");
+        });
+
+        indiqueUmAmigo.addEventListener("click", function() {
+            showContent("indique-um-amigo");
+        });
+
+        patrocinios.addEventListener("click", function() {
+            showContent("patrocinios");
         });
 
         // Deposit functionality
@@ -575,13 +660,13 @@
 
             const user = auth.currentUser;
             if (!user) {
-                alert('로그인이 필요합니다.');
+                alert('Faça login na sua conta.');
                 return;
             }
 
             const userDoc = getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
                 if (!userDoc.exists()) {
-                    alert('유저 정보를 찾을 수 없습니다.');
+                    alert('usuário não encontrado.');
                     return;
                 }
 
@@ -612,7 +697,7 @@
                 const messageTime = msg.timestamp.toDate();
                 const timeDiff = now - messageTime;
 
-                if (timeDiff > 180000) { // 30 minutes
+                if (timeDiff > 1800000) { // 30 minutes
                     deleteDoc(doc.ref);
                 }
             });
@@ -628,7 +713,7 @@
             } else {
                 navMenu.style.display = "flex";
                 userInfo.style.display = "none";
-                onlineCount.innerText = 'ONLINE: 0 Pessoas';
+                onlineCount.innerText = 'ONLINE: 0 Pessoa(s)';
             }
         });
 
@@ -636,7 +721,7 @@
             const onlineQuery = query(collection(db, 'users'), where('online', '==', true));
             onSnapshot(onlineQuery, (snapshot) => {
                 const onlineUsers = snapshot.size;
-                onlineCount.innerText = `ONLINE: ${onlineUsers} Pessoas`;
+                onlineCount.innerText = `ONLINE: ${onlineUsers} Pessoa(s)`;
             });
         }
 
@@ -703,7 +788,7 @@
                                     saldo_anterior: userData.balance,
                                     saldo_atualizado: newBalance
                                 }).then(() => {
-                                    saqueBalance.innerText = newBalance;
+                                    saqueBalance.innerText = newBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                                     alert('Saque realizado com sucesso!');
                                     saqueModal.style.display = 'none';
                                 });
@@ -715,7 +800,31 @@
                 });
             }
         });
-
     </script>
-</body>
-</html>
+
+    <!-- 고정 푸터 추가 -->
+    <footer class="fixed-footer">
+        <div class="footer-btns">
+            <button id="menu-btn" class="btn">Menu</button>
+            <button id="pesquisa-btn" class="btn">Pesquisa</button>
+            <div class="logo">▒ BLACK DICE ▒</div>
+            <button id="chat-btn" class="btn">
+                <button id="chat-btn" class="btn">Chat</button>
+                <button id="user-btn" class="btn">ENTRAR</button>
+            </div>
+        </footer>
+    
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+            import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
+            import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+            import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+    
+            const firebaseConfig = {
+                apiKey: "AIzaSyDhRkSDgED4xcWTAHvA_bRMhACNIUA1SLQ",
+                authDomain: "blackdice-490e9.firebaseapp.com",
+                projectId: "blackdice-490e9",
+                storageBucket: "blackdice-490e9.appspot.com",
+                messagingSenderId: "468114117476",
+                appId: "1:468114117476:web:626cbb82e7b8a5d72
+    
