@@ -7,6 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    font-size: 8pt; /* 모든 폰트를 8pt로 설정 */
 }
 
 header {
@@ -15,7 +16,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: left;
-    width: calc(97%); /* Increase width by 15px */
+    width: calc(97%);
 }
 
 .logo {
@@ -46,7 +47,7 @@ nav ul#user-info li a.btn {
     color: #ffffff;
     padding: 8px 18px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 8pt;
     font-weight: normal;
     text-decoration: none;
 }
@@ -84,7 +85,7 @@ nav ul#nav-menu li a.btn:hover {
 .container {
     display: flex;
     flex: 1;
-    overflow: auto; /* Enable scrolling within the main layout */
+    overflow: auto;
 }
 
 .sidebar {
@@ -124,6 +125,7 @@ nav ul#nav-menu li a.btn:hover {
     padding: 1px;
     border-radius: 5px;
     margin-top: -15px;
+    border: 7px solid #e5091400; /* 채팅창과 동일한 테두리 */
 }
 
 .chat-messages {
@@ -157,7 +159,7 @@ nav ul#nav-menu li a.btn:hover {
     color: #030202;
     padding: 8px 8px;
     border-radius: 1px;
-    font-size: 10pt;
+    font-size: 8pt;
     text-decoration: none;
     cursor: pointer;
     margin-left: 8px;
@@ -168,7 +170,7 @@ nav ul#nav-menu li a.btn:hover {
 }
 
 .online-count {
-    font-size: 12px;
+    font-size: 8pt;
     color: #be2727;
     text-align: center;
     margin-bottom: 6px;
@@ -204,8 +206,7 @@ main {
 
 .banner-content p {
     font-size: 22px;
-    margin-bottom
-    : 18px;
+    margin-bottom: 18px;
 }
 
 .banner-content .btn.play-now {
@@ -253,7 +254,7 @@ main {
 }
 
 .game-item h3 {
-    font-size: 12px;
+    font-size: 8pt;
     margin-bottom: 8px;
     color: #e50914;
 }
@@ -269,7 +270,7 @@ main {
     padding: 3px 8px;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 10px;
+    font-size: 8pt;
 }
 
 .game-buttons .btn:hover {
@@ -312,7 +313,7 @@ form h2 {
     border-radius: 5px;
     background-color: #121212;
     color: #ffffff;
-    font-size: 12px;
+    font-size: 8pt;
 }
 
 .form-buttons {
@@ -326,7 +327,7 @@ form h2 {
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 8pt;
 }
 
 .form-buttons .btn:hover {
@@ -373,7 +374,7 @@ footer p {
 
 .alert-content p {
     margin-bottom: 20px;
-    font-size: 16px;
+    font-size: 8pt;
 }
 
 .alert-content .btn {
@@ -382,7 +383,7 @@ footer p {
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 8pt;
 }
 
 .alert-content .btn:hover {
@@ -406,6 +407,7 @@ footer p {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
+    border: 7px solid #e50914; /* 채팅창과 동일한 테두리 */
 }
 
 .modal-body {
@@ -426,7 +428,7 @@ footer p {
     border-radius: 5px;
     background-color: #121212;
     color: #ffffff;
-    font-size: 14px;
+    font-size: 8pt;
 }
 
 .modal-body .btn {
@@ -435,7 +437,7 @@ footer p {
     padding: 8px 16px;
     margin: 5px;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 8pt;
     cursor: pointer;
 }
 
@@ -583,4 +585,53 @@ nav ul#user-info li a:hover {
     }
 }
 
+.dice-timer {
+    font-size: 40px;
+    margin-bottom: 10px;
+}
 
+.dice-result {
+    font-size: 60px;
+    margin-bottom: 10px;
+}
+
+.dice-text {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+.bet-history {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.bet-amount-info {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.bet-container {
+    margin-bottom: 10px;
+}
+
+.bet-container input {
+    font-size: 8pt;
+    padding: 5px;
+    border: 1px solid #e50914;
+    border-radius: 5px;
+    background-color: #121212;
+    color: #ffffff;
+    width: 100px;
+}
+
+.bet-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.user-info {
+    margin-top: 10px;
+    font-size: 8pt;
+    text-align: center;
+}
