@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .dice-game-board {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 7px solid #e50914;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #1f1f1f;
+            width: 300px; /* Adjust width to match the chat window size */
+            margin-bottom: 20px;
+        }
+        .logo {
+            font-size: 30px;
+            font-weight: bold;
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+        .dice-timer {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .dice-result {
+            font-size: 60px;
+            margin: 20px 0;
+        }
+        .dice-text {
+            font-size: 35px;
+            margin-top: 20px;
+        }
+        .user-info {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        .bet-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .bet-container input {
+            width: 100px;
+            padding: 10px;
+            border: 1px solid #e50914;
+            border-radius: 5px;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .bet-container .btn {
+            background-color: #e50914;
+            color: #ffffff;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .bet-container .btn:hover {
+            background-color: #ff1e2d;
+        }
+    </style>
+</head>
+<body>
+    <div class="dice-game-board" id="dice-game-board">
+        <div class="logo">▒ BLACK DICE ▒</div>
+        <div id="dice-timer" class="dice-timer">15</div>
+        <div id="dice-result" class="dice-result">⚀ ⚀</div>
+        <div id="dice-text" class="dice-text"></div>
+        <div class="bet-container">
+            <input type="number" id="bet-amount" placeholder="Bet Amount" />
+            <button id="par-bet-btn" class="btn">PAR</button>
+            <button id="inpar-bet-btn" class="btn">INPAR</button>
+        </div>
+        <div class="user-info">
+            <span id="user-name">User</span>, <span id="user-balance">Saldo: 1000 BRL</span>
+        </div>
+    </div>
+    <script>
+        let intervalId;
+        let countdown = 15;
+        let betType = null;
+        const diceTimer = document.getElementById('dice-timer');
+        const diceResult = document.getElementById('dice-result');
+        const diceText = document.getElementById('dice-text');
+        const userName = document.getElementById('user-name');
+        const userBalance = document.getElementById('user-balance');
+        const betAmountInput = document.getElementById('bet-amount');
+        const parBetBtn = document.getElementById('par-bet-btn');
+        const inparBetBtn = document.getElementById('inpar-bet-btn');
+        const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        let balance = 1000; // 초기 잔액, 실제 사용자 잔액으로 대체 필요
+
+        // 임시 사용자 정보
+        userName.textContent = 'User'; // Replace with actual user name
+        userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+
+        function startCountdown() {
+            countdown = 15;
+            diceTimer.textContent = countdown;
+            diceText.textContent = "";
+            intervalId = setInterval(() => {
+                countdown -= 1;
+                diceTimer.textContent = countdown;
+                if (countdown > 0) {
+                    setTimeout(() => {
+                        diceResult.textContent = `${diceSymbols[Math.floor(Math.random() * 6)]} ${diceSymbols[Math.floor(Math.random() * 6)]}`;
+                    }, 125); // 1초에 8번 변경 (1000ms / 8 = 125ms)
+                }
+                if (countdown === 0) {
+                    clearInterval(intervalId);
+                    showDiceResult();
+                }
+            }, 1000);
+        }
+
+        function showDiceResult() {
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            const sum = dice1 + dice2;
+            diceResult.textContent = `${diceSymbols[dice1 - 1]} ${diceSymbols[dice2 - 1]}`;
+            if (sum % 2 === 0) {
+                diceText.textContent = 'PAR WIN';
+                if (betType === 'PAR') {
+                    balance += betAmount * 2;
+                }
+            } else {
+                diceText.textContent = 'INPAR WIN';
+                if (betType === 'INPAR') {
+                    balance += betAmount * 2;
+                }
+            }
+            updateBalance();
+            betType = null;
+            setTimeout(startCountdown, 10000);
+        }
+
+        function updateBalance() {
+            userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+        }
+
+        parBetBtn.addEventListener('click', () => {
+            const betAmount = parseFloat(betAmountInput.value);
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert('Por favor, insira um valor de aposta válido.');
+                return;
+            }
+            if (balance >= betAmount) {
+                balance -= betAmount;
+                updateBalance();
+                betType = 'PAR';
+            } else {
+                alert('Saldo insuficiente.');
+            }
+        });
+
+        inparBetBtn.addEventListener('click', () => {
+            const betAmount = parseFloat(betAmountInput.value);
+            if (isNaN(betAmount) || betAmount <= 0) {
+                alert('Por favor, insira um valor de aposta válido.');
+                return;
+            }
+            if (balance >= betAmount) {
+                balance -= betAmount;
+                updateBalance();
+                betType = 'INPAR';
+            } else {
+                alert('Saldo insuficiente.');
+            }
+        });
+
+        startCountdown();
+    </script>
+</body>
+</html>
