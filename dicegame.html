@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -117,6 +117,87 @@
         .reset-bet-btn:hover {
             background-color: #ff1e2d;
         }
+        .adm-btn {
+            background-color: #e50914;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .adm-btn:hover {
+            background-color: #ff1e2d;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #1f1f1f;
+            border: 7px solid #e50914;
+            border-radius: 10px;
+            padding: 20px;
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+            color: #ffffff;
+        }
+        .modal-close {
+            background-color: #e50914;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .modal-close:hover {
+            background-color: #ff1e2d;
+        }
+        .dashboard-title {
+            font-size: 30px;
+            font-weight: bold;
+            color: #e50914;
+            margin-bottom: 20px;
+        }
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .dashboard-table th, .dashboard-table td {
+            border: 1px solid #e50914;
+            padding: 10px;
+            text-align: left;
+        }
+        .copy-btn, .saqueok-btn, .upload-btn {
+            background-color: #e50914;
+            color: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .copy-btn:hover, .saqueok-btn:hover, .upload-btn:hover {
+            background-color: #ff1e2d;
+        }
+        .codigo-input {
+            width: 100px;
+            padding: 5px;
+            border: 1px solid #e50914;
+            border-radius: 5px;
+            background-color: #121212;
+            color: #ffffff;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -139,12 +220,48 @@
         <div class="user-info">
             <span id="user-name">User</span>, <span id="user-balance">Saldo: 1000 BRL</span>
         </div>
+        <button id="adm-btn" class="adm-btn">ADM</button>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="dashboard-title">▒ BLACK DICE ▒</div>
+            <div id="dashboard-total-saque">SAQUE SOLICITADO TOTAL: R$ 0,00</div>
+            <div id="dashboard-total-saque-ok">SAQUE SOLICITADO OK TOTAL: R$ 0,00</div>
+            <div id="dashboard-total-deposito">DEPOSITO SOLICITADO TOTAL: R$ 0,00</div>
+            <div id="dashboard-total-deposito-ok">DEPOSITO SOLICITADO OK TOTAL: R$ 0,00</div>
+            <table id="dashboard-table-saque" class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Pix</th>
+                        <th>Pix Saque Solicitado</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <table id="dashboard-table-deposito" class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Pix</th>
+                        <th>Pix Deposito Solicitado</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+            <button id="modal-close" class="modal-close">Close</button>
+        </div>
     </div>
     <div class="alert-message" id="alert-message"></div>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, updateDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-storage.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDO6_37Leg8EdVFTreP9V_xweJO3fa-UjQ",
@@ -159,6 +276,7 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth();
         const db = getFirestore(app);
+        const storage = getStorage(app);
 
         let intervalId;
         let countdown = 15;
@@ -179,8 +297,25 @@
         const betInfo = document.getElementById('bet-info');
         const resetBetBtn = document.getElementById('reset-bet-btn');
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+        const admBtn = document.getElementById('adm-btn');
+        const modal = document.getElementById('modal');
+        const modalClose = document.getElementById('modal-close');
         let balance = 1000; // 초기 잔액, 실제 사용자 잔액으로 대체 필요
         let previousResults = [];
+
+        admBtn.addEventListener('click', () => {
+            const password = prompt('Enter ADM password:');
+            if (password === 'xxxxxx') {
+                modal.style.display = 'flex';
+                loadDashboardData();
+            } else {
+                alert('Incorrect password.');
+            }
+        });
+
+        modalClose.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
 
         document.getElementById('logo').addEventListener('click', () => {
             window.open(window.location.href, '_blank', 'fullscreen=yes');
@@ -278,6 +413,144 @@
                     alertMessage.style.opacity = '1';
                 }, 1000);
             }, 4000);
+        }
+
+        function loadDashboardData() {
+            const saqueQuery = collection(db, "saquepix");
+            const depositoQuery = collection(db, "depositopix");
+
+            onSnapshot(saqueQuery, (snapshot) => {
+                const saqueTableBody = document.querySelector('#dashboard-table-saque tbody');
+                let totalSaque = 0;
+                let totalSaqueOk = 0;
+                saqueTableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.saquestatus !== 'OK') {
+                        totalSaque += data.pix_saque_solicitado;
+                        const row = `<tr>
+                            <td>${data.nome}</td>
+                            <td>${data.pix}</td>
+                            <td>${data.pix_saque_solicitado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                            <td>
+                                <button class="copy-btn" data-copy="${data.pix}">Copy Pix</button>
+                                <button class="copy-btn" data-copy="${data.pix_saque_solicitado}">Copy Amount</button>
+                                <button class="saqueok-btn" data-id="${doc.id}">Saque OK</button>
+                            </td>
+                        </tr>`;
+                        saqueTableBody.insertAdjacentHTML('beforeend', row);
+                    } else {
+                        totalSaqueOk += data.pix_saque_solicitado;
+                    }
+                });
+
+                document.getElementById('dashboard-total-saque').textContent = `SAQUE SOLICITADO TOTAL: ${totalSaque.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                document.getElementById('dashboard-total-saque-ok').textContent = `SAQUE SOLICITADO OK TOTAL: ${totalSaqueOk.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const textToCopy = button.getAttribute('data-copy');
+                        navigator.clipboard.writeText(textToCopy);
+                    });
+                });
+
+                document.querySelectorAll('.saqueok-btn').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const docId = button.getAttribute('data-id');
+                        await updateDoc(doc(db, "saquepix", docId), {
+                            saquestatus: 'OK'
+                        });
+                    });
+                });
+            });
+
+            onSnapshot(depositoQuery, (snapshot) => {
+                const depositoTableBody = document.querySelector('#dashboard-table-deposito tbody');
+                let totalDeposito = 0;
+                let totalDepositoOk = 0;
+                depositoTableBody.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.status !== 'OK') {
+                        totalDeposito += data.pix_deposito_solicitado;
+                        const row = `<tr>
+                            <td>${data.nome}</td>
+                            <td>${data.pix}</td>
+                            <td>${data.pix_deposito_solicitado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                            <td>
+                                <button class="copy-btn" data-copy="${data.pix}">Copy Pix</button>
+                                <button class="copy-btn" data-copy="${data.pix_deposito_solicitado}">Copy Amount</button>
+                                <input type="text" class="codigo-input" placeholder="Enter codigo">
+                                <button class="upload-btn" data-id="${doc.id}">Upload</button>
+                                <input type="file" class="file-input" data-id="${doc.id}" style="display:none">
+                                <button class="file-btn" data-id="${doc.id}">Upload Image</button>
+                            </td>
+                        </tr>`;
+                        depositoTableBody.insertAdjacentHTML('beforeend', row);
+                    } else {
+                        totalDepositoOk += data.pix_deposito_solicitado;
+                    }
+                });
+
+                document.getElementById('dashboard-total-deposito').textContent = `DEPOSITO SOLICITADO TOTAL: ${totalDeposito.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                document.getElementById('dashboard-total-deposito-ok').textContent = `DEPOSITO SOLICITADO OK TOTAL: ${totalDepositoOk.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+
+                document.querySelectorAll('.copy-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const textToCopy = button.getAttribute('data-copy');
+                        navigator.clipboard.writeText(textToCopy);
+                    });
+                });
+
+                document.querySelectorAll('.upload-btn').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const docId = button.getAttribute('data-id');
+                        const codigoInput = button.previousElementSibling;
+                        const codigo = codigoInput.value;
+                        if (codigo) {
+                            await updateDoc(doc(db, "depositopix", docId), {
+                                codigo: codigo
+                            });
+                            codigoInput.value = '';
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.file-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const fileInput = button.previousElementSibling;
+                        fileInput.click();
+                    });
+                });
+
+                document.querySelectorAll('.file-input').forEach(input => {
+                    input.addEventListener('change', async (event) => {
+                        const file = event.target.files[0];
+                        const docId = event.target.getAttribute('data-id');
+                        if (file) {
+                            const storageRef = ref(storage, `depositopix/${docId}/${file.name}`);
+                            const uploadTask = uploadBytesResumable(storageRef, file);
+
+                            uploadTask.on('state_changed', 
+                                (snapshot) => {
+                                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                                    console.log(`Upload is ${progress}% done`);
+                                }, 
+                                (error) => {
+                                    console.error('Upload failed', error);
+                                }, 
+                                async () => {
+                                    const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+                                    await updateDoc(doc(db, "depositopix", docId), {
+                                        imageURL: downloadURL
+                                    });
+                                    console.log('File available at', downloadURL);
+                                }
+                            );
+                        }
+                    });
+                });
+            });
         }
 
         parBetBtn.addEventListener('click', () => {
