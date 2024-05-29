@@ -618,17 +618,40 @@
     const btn240 = document.getElementById('btn-240');
     const btn600 = document.getElementById('btn-600');
     const btnDigitar = document.getElementById('btn-digitar');
+    const depositAmountInput = document.getElementById('deposit-amount');
 
     depositBtn.addEventListener('click', () => {
         depositModal.style.display = 'flex';
     });
 
-    generateCodeBtn.addEventListener('click', () => {
-        depositModal.classList.add('fade-out');
-        setTimeout(() => {
-            depositModal.style.display = 'none';
-            depositModal.classList.remove('fade-out');
-        }, 1000);
+    generateCodeBtn.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        const depositAmount = parseFloat(depositAmountInput.value);
+        if (user && !isNaN(depositAmount) && depositAmount > 0) {
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists()) {
+                const userData = userDoc.data();
+                const newBalance = userData.balance + depositAmount;
+
+                await addDoc(collection(db, 'depositopix'), {
+                    nome: userData.name,
+                    pix: userData.pix,
+                    pix_deposito_solicitado: depositAmount,
+                    saldo_anterior: userData.balance,
+                    saldo_atualizado: newBalance,
+                    status: 'pending',
+                    timestamp: serverTimestamp()
+                });
+
+                depositModal.classList.add('fade-out');
+                setTimeout(() => {
+                    depositModal.style.display = 'none';
+                    depositModal.classList.remove('fade-out');
+                }, 1000);
+            }
+        } else {
+            alert('Insira um valor de depósito válido.');
+        }
     });
 
     btn60.addEventListener('click', () => {
@@ -644,7 +667,7 @@
     });
 
     btnDigitar.addEventListener('click', () => {
-        document.getElementById('deposit-amount').focus();
+        depositAmountInput.focus();
     });
 
     function openPixWindow(url) {
@@ -815,4 +838,5 @@
         window.open(diceGameUrl, 'Dice Game', 'width=800,height=600');
     });
 </script>
- 
+</body>
+</html>
