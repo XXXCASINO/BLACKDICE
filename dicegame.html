@@ -34,6 +34,7 @@
             font-weight: bold;
             color: #e50914;
             margin-bottom: 20px;
+            cursor: pointer;
         }
         .dice-timer {
             font-size: 40px;
@@ -80,41 +81,77 @@
         .bet-container .btn:hover {
             background-color: #ff1e2d;
         }
+        .bet-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .dice-history {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ffffff;
+        }
+        .alert-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            font-size: 24px;
+            text-align: center;
+            display: none;
+            z-index: 1000;
+        }
     </style>
 </head>
 <body>
     <div class="dice-game-board" id="dice-game-board">
-        <div class="logo">▒ BLACK DICE ▒</div>
+        <div class="logo" id="logo">▒ BLACK DICE ▒</div>
         <div id="dice-timer" class="dice-timer">15</div>
+        <div id="dice-history" class="dice-history"></div>
         <div id="dice-result" class="dice-result">⚀ ⚀</div>
         <div id="dice-text" class="dice-text"></div>
         <div class="bet-container">
             <input type="number" id="bet-amount" placeholder="Bet Amount" />
-            <button id="par-bet-btn" class="btn">PAR</button>
-            <button id="inpar-bet-btn" class="btn">INPAR</button>
+            <div class="bet-buttons">
+                <button id="par-bet-btn" class="btn">PAR</button>
+                <button id="inpar-bet-btn" class="btn">INPAR</button>
+                <button id="x2-bet-btn" class="btn">X2</button>
+            </div>
         </div>
         <div class="user-info">
             <span id="user-name">User</span>, <span id="user-balance">Saldo: 1000 BRL</span>
         </div>
     </div>
+    <div class="alert-message" id="alert-message"></div>
     <script>
         let intervalId;
         let countdown = 15;
         let betType = null;
+        let lastBetAmount = 0;
         const diceTimer = document.getElementById('dice-timer');
         const diceResult = document.getElementById('dice-result');
         const diceText = document.getElementById('dice-text');
+        const diceHistory = document.getElementById('dice-history');
         const userName = document.getElementById('user-name');
         const userBalance = document.getElementById('user-balance');
         const betAmountInput = document.getElementById('bet-amount');
         const parBetBtn = document.getElementById('par-bet-btn');
         const inparBetBtn = document.getElementById('inpar-bet-btn');
+        const x2BetBtn = document.getElementById('x2-bet-btn');
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
         let balance = 1000; // 초기 잔액, 실제 사용자 잔액으로 대체 필요
+        let previousResults = [];
 
         // 임시 사용자 정보
         userName.textContent = 'User'; // Replace with actual user name
         userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+
+        document.getElementById('logo').addEventListener('click', () => {
+            window.open(window.location.href, '_blank', 'fullscreen=yes');
+        });
 
         function startCountdown() {
             countdown = 15;
@@ -122,11 +159,15 @@
             diceText.textContent = "";
             intervalId = setInterval(() => {
                 countdown -= 1;
-                diceTimer.textContent = countdown;
+                if (countdown > 3) {
+                    diceTimer.textContent = countdown;
+                } else {
+                    diceTimer.textContent = '';
+                }
                 if (countdown > 0) {
                     setTimeout(() => {
                         diceResult.textContent = `${diceSymbols[Math.floor(Math.random() * 6)]} ${diceSymbols[Math.floor(Math.random() * 6)]}`;
-                    }, 125); // 1초에 8번 변경 (1000ms / 8 = 125ms)
+                    }, 142); // 1초에 7번 변경 (1000ms / 7 = 142ms)
                 }
                 if (countdown === 0) {
                     clearInterval(intervalId);
@@ -140,24 +181,50 @@
             const dice2 = Math.floor(Math.random() * 6) + 1;
             const sum = dice1 + dice2;
             diceResult.textContent = `${diceSymbols[dice1 - 1]} ${diceSymbols[dice2 - 1]}`;
+            previousResults.push(`${diceSymbols[dice1 - 1]} ${diceSymbols[dice2 - 1]}`);
+            if (previousResults.length > 5) previousResults.shift();
+            updateDiceHistory();
+
             if (sum % 2 === 0) {
                 diceText.textContent = 'PAR WIN';
                 if (betType === 'PAR') {
-                    balance += betAmount * 2;
+                    const winAmount = lastBetAmount * 2;
+                    balance += winAmount;
+                    showAlert(`Voce ganhou R$ : ${winAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} !`);
                 }
             } else {
                 diceText.textContent = 'INPAR WIN';
                 if (betType === 'INPAR') {
-                    balance += betAmount * 2;
+                    const winAmount = lastBetAmount * 2;
+                    balance += winAmount;
+                    showAlert(`Voce ganhou R$ : ${winAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} !`);
                 }
             }
+
             updateBalance();
             betType = null;
-            setTimeout(startCountdown, 10000);
+            setTimeout(startCountdown, 10000); // 10초 대기 후 카운트다운 시작
         }
 
         function updateBalance() {
             userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+        }
+
+        function updateDiceHistory() {
+            diceHistory.innerHTML = previousResults.map(result => `| ${result} |`).join(' ');
+        }
+
+        function showAlert(message) {
+            const alertMessage = document.getElementById('alert-message');
+            alertMessage.textContent = message;
+            alertMessage.style.display = 'block';
+            setTimeout(() => {
+                alertMessage.style.opacity = '0';
+                setTimeout(() => {
+                    alertMessage.style.display = 'none';
+                    alertMessage.style.opacity = '1';
+                }, 1000);
+            }, 4000);
         }
 
         parBetBtn.addEventListener('click', () => {
@@ -170,6 +237,7 @@
                 balance -= betAmount;
                 updateBalance();
                 betType = 'PAR';
+                lastBetAmount = betAmount;
             } else {
                 alert('Saldo insuficiente.');
             }
@@ -185,8 +253,19 @@
                 balance -= betAmount;
                 updateBalance();
                 betType = 'INPAR';
+                lastBetAmount = betAmount;
             } else {
                 alert('Saldo insuficiente.');
+            }
+        });
+
+        x2BetBtn.addEventListener('click', () => {
+            if (lastBetAmount > 0 && balance >= lastBetAmount * 2) {
+                balance -= lastBetAmount * 2;
+                updateBalance();
+                lastBetAmount *= 2;
+            } else {
+                alert('Saldo insuficiente ou nenhuma aposta anterior encontrada.');
             }
         });
 
