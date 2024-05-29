@@ -115,6 +115,7 @@
         <div id="dice-text" class="dice-text"></div>
         <div class="bet-container">
             <input type="number" id="bet-amount" placeholder="Bet Amount" />
+            <div id="bet-info" class="bet-info"></div>
             <div class="bet-buttons">
                 <button id="par-bet-btn" class="btn">PAR</button>
                 <button id="inpar-bet-btn" class="btn">INPAR</button>
@@ -126,11 +127,30 @@
         </div>
     </div>
     <div class="alert-message" id="alert-message"></div>
-    <script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth();
+        const db = getFirestore(app);
+
         let intervalId;
         let countdown = 15;
         let betType = null;
         let lastBetAmount = 0;
+        let totalParBet = 0;
+        let totalInparBet = 0;
         const diceTimer = document.getElementById('dice-timer');
         const diceResult = document.getElementById('dice-result');
         const diceText = document.getElementById('dice-text');
@@ -141,16 +161,25 @@
         const parBetBtn = document.getElementById('par-bet-btn');
         const inparBetBtn = document.getElementById('inpar-bet-btn');
         const x2BetBtn = document.getElementById('x2-bet-btn');
+        const betInfo = document.getElementById('bet-info');
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
         let balance = 1000; // 초기 잔액, 실제 사용자 잔액으로 대체 필요
         let previousResults = [];
 
-        // 임시 사용자 정보
-        userName.textContent = 'User'; // Replace with actual user name
-        userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
-
         document.getElementById('logo').addEventListener('click', () => {
             window.open(window.location.href, '_blank', 'fullscreen=yes');
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    userName.textContent = userData.name;
+                    balance = userData.balance;
+                    updateBalance();
+                }
+            }
         });
 
         function startCountdown() {
@@ -188,14 +217,14 @@
             if (sum % 2 === 0) {
                 diceText.textContent = 'PAR WIN';
                 if (betType === 'PAR') {
-                    const winAmount = lastBetAmount * 2;
+                    const winAmount = totalParBet * 2;
                     balance += winAmount;
                     showAlert(`Voce ganhou R$ : ${winAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} !`);
                 }
             } else {
                 diceText.textContent = 'INPAR WIN';
                 if (betType === 'INPAR') {
-                    const winAmount = lastBetAmount * 2;
+                    const winAmount = totalInparBet * 2;
                     balance += winAmount;
                     showAlert(`Voce ganhou R$ : ${winAmount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })} !`);
                 }
@@ -203,11 +232,18 @@
 
             updateBalance();
             betType = null;
+            totalParBet = 0;
+            totalInparBet = 0;
             setTimeout(startCountdown, 10000); // 10초 대기 후 카운트다운 시작
         }
 
         function updateBalance() {
             userBalance.textContent = `Saldo: ${balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+            if (auth.currentUser) {
+                updateDoc(doc(db, "users", auth.currentUser.uid), {
+                    balance: balance
+                });
+            }
         }
 
         function updateDiceHistory() {
@@ -237,7 +273,8 @@
                 balance -= betAmount;
                 updateBalance();
                 betType = 'PAR';
-                lastBetAmount = betAmount;
+                totalParBet += betAmount;
+                betInfo.textContent = `Par: ${totalParBet.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             } else {
                 alert('Saldo insuficiente.');
             }
@@ -253,19 +290,32 @@
                 balance -= betAmount;
                 updateBalance();
                 betType = 'INPAR';
-                lastBetAmount = betAmount;
+                totalInparBet += betAmount;
+                betInfo.textContent = `Inpar: ${totalInparBet.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
             } else {
                 alert('Saldo insuficiente.');
             }
         });
 
         x2BetBtn.addEventListener('click', () => {
-            if (lastBetAmount > 0 && balance >= lastBetAmount * 2) {
-                balance -= lastBetAmount * 2;
-                updateBalance();
-                lastBetAmount *= 2;
+            const lastBetType = betType === 'PAR' ? 'totalParBet' : 'totalInparBet';
+            if (totalParBet > 0 || totalInparBet > 0) {
+                const lastBet = betType === 'PAR' ? totalParBet : totalInparBet;
+                if (balance >= lastBet) {
+                    balance -= lastBet;
+                    updateBalance();
+                    if (betType === 'PAR') {
+                        totalParBet += lastBet;
+                        betInfo.textContent = `Par: ${totalParBet.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                    } else {
+                        totalInparBet += lastBet;
+                        betInfo.textContent = `Inpar: ${totalInparBet.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                    }
+                } else {
+                    alert('Saldo insuficiente.');
+                }
             } else {
-                alert('Saldo insuficiente ou nenhuma aposta anterior encontrada.');
+                alert('Nenhuma aposta anterior encontrada.');
             }
         });
 
