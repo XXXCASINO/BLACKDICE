@@ -26,7 +26,7 @@
             border-radius: 10px;
             text-align: center;
             background-color: #1f1f1f;
-            width: 300px; /* Adjust width to match the chat window size */
+            width: 300px;
             margin-bottom: 20px;
         }
         .logo {
@@ -103,6 +103,19 @@
             text-align: center;
             display: none;
             z-index: 1000;
+            opacity: 0.3;
+        }
+        .reset-bet-btn {
+            background-color: #e50914;
+            color: #ffffff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .reset-bet-btn:hover {
+            background-color: #ff1e2d;
         }
     </style>
 </head>
@@ -121,6 +134,7 @@
                 <button id="inpar-bet-btn" class="btn">INPAR</button>
                 <button id="x2-bet-btn" class="btn">X2</button>
             </div>
+            <button id="reset-bet-btn" class="reset-bet-btn">Reset Bet</button>
         </div>
         <div class="user-info">
             <span id="user-name">User</span>, <span id="user-balance">Saldo: 1000 BRL</span>
@@ -163,6 +177,7 @@
         const inparBetBtn = document.getElementById('inpar-bet-btn');
         const x2BetBtn = document.getElementById('x2-bet-btn');
         const betInfo = document.getElementById('bet-info');
+        const resetBetBtn = document.getElementById('reset-bet-btn');
         const diceSymbols = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
         let balance = 1000; // 초기 잔액, 실제 사용자 잔액으로 대체 필요
         let previousResults = [];
@@ -195,9 +210,10 @@
                     diceTimer.textContent = '';
                 }
                 if (countdown > 0) {
-                    setTimeout(() => {
+                    let diceChangeInterval = setInterval(() => {
                         diceResult.textContent = `${diceSymbols[Math.floor(Math.random() * 6)]} ${diceSymbols[Math.floor(Math.random() * 6)]}`;
                     }, 142); // 1초에 7번 변경 (1000ms / 7 = 142ms)
+                    setTimeout(() => clearInterval(diceChangeInterval), 1000);
                 }
                 if (countdown === 0) {
                     clearInterval(intervalId);
@@ -318,6 +334,12 @@
             } else {
                 alert('Nenhuma aposta anterior encontrada.');
             }
+        });
+
+        resetBetBtn.addEventListener('click', () => {
+            totalParBet = 0;
+            totalInparBet = 0;
+            betInfo.textContent = '';
         });
 
         startCountdown();
