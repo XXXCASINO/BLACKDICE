@@ -7,7 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    font-size: 8pt; /* 모든 폰트를 8pt로 설정 */
+    font-size: 8pt;
 }
 
 header {
@@ -15,14 +15,15 @@ header {
     padding: 20px;
     display: flex;
     justify-content: space-between;
-    align-items: left;
-    width: calc(97%);
+    align-items: center;
+    width: calc(100% - 40px);
 }
 
 .logo {
     font-size: 30px;
     font-weight: bold;
     color: #e50914;
+    cursor: pointer;
 }
 
 nav ul {
@@ -125,7 +126,7 @@ nav ul#nav-menu li a.btn:hover {
     padding: 1px;
     border-radius: 5px;
     margin-top: -15px;
-    border: 7px solid #e5091400; /* 채팅창과 동일한 테두리 */
+    border: 7px solid #e5091400;
 }
 
 .chat-messages {
@@ -407,7 +408,7 @@ footer p {
     padding: 20px;
     border-radius: 10px;
     text-align: center;
-    border: 7px solid #e50914; /* 채팅창과 동일한 테두리 */
+    border: 7px solid #e50914;
 }
 
 .modal-body {
@@ -458,7 +459,6 @@ footer p {
     }
 }
 
-/* Additional CSS for fixed footer */
 .fixed-footer {
     position: fixed;
     bottom: 0;
@@ -483,9 +483,9 @@ footer p {
     font-size: 14px;
     border: none;
     cursor: pointer;
-    opacity: 0.95; /* Set transparency to 25% */
-    font-weight: bold; /* Same font weight as the logo */
-    font-family: Arial, sans-serif; /* Same font family as the logo */
+    opacity: 0.95;
+    font-weight: bold;
+    font-family: Arial, sans-serif;
 }
 
 .footer-btns .btn:hover {
@@ -496,8 +496,8 @@ footer p {
     font-size: 20px;
     font-weight: bold;
     color: #000000;
-    opacity: 0.25; /* Set transparency to 25% */
-    font-family: Arial, sans-serif; /* Same font family as the logo */
+    opacity: 0.25;
+    font-family: Arial, sans-serif;
 }
 
 .sidebar ul li a,
@@ -582,7 +582,7 @@ nav ul#user-info li a:hover {
 
     .footer-btns .logo {
         margin: 5px 0;
-    } 
+    }
 }
 
 .dice-timer {
