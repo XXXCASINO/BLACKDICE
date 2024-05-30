@@ -145,22 +145,23 @@
             border: 7px solid #e50914;
             border-radius: 10px;
             padding: 20px;
-            width: 80%;
-            max-width: 800px;
-            text-align: center;
+            width: 90%;
+            max-width: 1200px;
+            text-align: left;
             color: #ffffff;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
         }
         .modal-close {
-            background-color: #e50914;
+            background-color: transparent;
             color: #ffffff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-size: 16px;
+            font-size: 20px;
             cursor: pointer;
-            margin-top: 20px;
-        }
-        .modal-close:hover {
-            background-color: #ff1e2d;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            border: none;
         }
         .dashboard-title {
             font-size: 30px;
@@ -176,27 +177,33 @@
         .dashboard-table th, .dashboard-table td {
             border: 1px solid #e50914;
             padding: 10px;
-            text-align: left;
+            text-align: center;
+            white-space: nowrap;
         }
-        .copy-btn, .saqueok-btn, .upload-btn {
+        .pix-btn, .brl-btn, .upload-btn, .file-btn, .ok-btn {
             background-color: #e50914;
             color: #ffffff;
-            padding: 5px 10px;
+            padding: 5px;
             border-radius: 5px;
-            font-size: 14px;
+            font-size: 10px;
             cursor: pointer;
+            margin: 2px;
         }
-        .copy-btn:hover, .saqueok-btn:hover, .upload-btn:hover {
+        .pix-btn:hover, .brl-btn:hover, .upload-btn:hover, .file-btn:hover, .ok-btn:hover {
             background-color: #ff1e2d;
         }
         .codigo-input {
-            width: 100px;
+            width: 40px;
             padding: 5px;
             border: 1px solid #e50914;
             border-radius: 5px;
             background-color: #121212;
             color: #ffffff;
-            font-size: 14px;
+            font-size: 10px;
+            margin: 2px;
+        }
+        .file-input {
+            display: none;
         }
     </style>
 </head>
@@ -224,36 +231,47 @@
     </div>
     <div id="modal" class="modal">
         <div class="modal-content">
-            <div class="dashboard-title">▒ BLACK DICE ▒</div>
-            <div id="dashboard-total-saque">SAQUE SOLICITADO TOTAL: R$ 0,00</div>
-            <div id="dashboard-total-saque-ok">SAQUE SOLICITADO OK TOTAL: R$ 0,00</div>
-            <div id="dashboard-total-deposito">DEPOSITO SOLICITADO TOTAL: R$ 0,00</div>
-            <div id="dashboard-total-deposito-ok">DEPOSITO SOLICITADO OK TOTAL: R$ 0,00</div>
-            <table id="dashboard-table-saque" class="dashboard-table">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Pix</th>
-                        <th>Pix Saque Solicitado</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <table id="dashboard-table-deposito" class="dashboard-table">
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Pix</th>
-                        <th>Pix Deposito Solicitado</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-            <button id="modal-close" class="modal-close">Close</button>
+            <!-- DEPOSITO 테이블 -->
+            <div style="border: 1px solid #e50914; padding: 20px; border-radius: 10px; flex: 1;">
+                <div class="dashboard-title">DEPOSITO</div>
+                <div id="dashboard-total-deposito" style="text-align: left;">DEPOSITO SOLICITADO TOTAL: R$ 0,00</div>
+                <div id="dashboard-total-deposito-ok" style="text-align: left;">DEPOSITO SOLICITADO OK TOTAL: R$ 0,00</div>
+                <div id="dashboard-pending-deposito" style="text-align: left;">PENDING PAGAMENTO: R$ 0,00</div>
+                <table id="dashboard-table-deposito" class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Pix</th>
+                            <th>Pix Deposito Solicitado</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <!-- SAQUE 테이블 -->
+            <div style="border: 1px solid #e50914; padding: 20px; border-radius: 10px; flex: 1;">
+                <div class="dashboard-title">SAQUE</div>
+                <div id="dashboard-total-saque" style="text-align: left;">SAQUE SOLICITADO TOTAL: R$ 0,00</div>
+                <div id="dashboard-total-saque-ok" style="text-align: left;">SAQUE SOLICITADO OK TOTAL: R$ 0,00</div>
+                <div id="dashboard-pending-saque" style="text-align: left;">PENDING PAGAMENTO: R$ 0,00</div>
+                <table id="dashboard-table-saque" class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome</th>
+                            <th>Pix</th>
+                            <th>Pix Saque Solicitado</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <button id="modal-close" class="modal-close">&times;</button>
         </div>
     </div>
     <div class="alert-message" id="alert-message"></div>
@@ -423,19 +441,23 @@
                 const saqueTableBody = document.querySelector('#dashboard-table-saque tbody');
                 let totalSaque = 0;
                 let totalSaqueOk = 0;
+                let pendingSaque = 0;
                 saqueTableBody.innerHTML = '';
-                snapshot.forEach(doc => {
+                const saqueDocs = snapshot.docs.slice(0, 10).reverse();
+                saqueDocs.forEach((doc, index) => {
                     const data = doc.data();
                     if (data.saquestatus !== 'OK') {
                         totalSaque += data.pix_saque_solicitado;
+                        pendingSaque += data.pix_saque_solicitado;
                         const row = `<tr>
+                            <td>${index + 1}</td>
                             <td>${data.nome}</td>
                             <td>${data.pix}</td>
                             <td>${data.pix_saque_solicitado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                             <td>
-                                <button class="copy-btn" data-copy="${data.pix}">Copy Pix</button>
-                                <button class="copy-btn" data-copy="${data.pix_saque_solicitado}">Copy Amount</button>
-                                <button class="saqueok-btn" data-id="${doc.id}">Saque OK</button>
+                                <button class="pix-btn" data-copy="${data.pix}">PIX</button>
+                                <button class="brl-btn" data-copy="${data.pix_saque_solicitado}">BRL</button>
+                                <button class="ok-btn" data-id="${doc.id}">OK</button>
                             </td>
                         </tr>`;
                         saqueTableBody.insertAdjacentHTML('beforeend', row);
@@ -446,20 +468,29 @@
 
                 document.getElementById('dashboard-total-saque').textContent = `SAQUE SOLICITADO TOTAL: ${totalSaque.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
                 document.getElementById('dashboard-total-saque-ok').textContent = `SAQUE SOLICITADO OK TOTAL: ${totalSaqueOk.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                document.getElementById('dashboard-pending-saque').textContent = `PENDING PAGAMENTO: ${pendingSaque.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
 
-                document.querySelectorAll('.copy-btn').forEach(button => {
+                document.querySelectorAll('.pix-btn').forEach(button => {
                     button.addEventListener('click', () => {
                         const textToCopy = button.getAttribute('data-copy');
                         navigator.clipboard.writeText(textToCopy);
                     });
                 });
 
-                document.querySelectorAll('.saqueok-btn').forEach(button => {
+                document.querySelectorAll('.brl-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const textToCopy = button.getAttribute('data-copy');
+                        navigator.clipboard.writeText(textToCopy);
+                    });
+                });
+
+                document.querySelectorAll('.ok-btn').forEach(button => {
                     button.addEventListener('click', async () => {
                         const docId = button.getAttribute('data-id');
                         await updateDoc(doc(db, "saquepix", docId), {
                             saquestatus: 'OK'
                         });
+                        button.closest('tr').remove();
                     });
                 });
             });
@@ -468,22 +499,27 @@
                 const depositoTableBody = document.querySelector('#dashboard-table-deposito tbody');
                 let totalDeposito = 0;
                 let totalDepositoOk = 0;
+                let pendingDeposito = 0;
                 depositoTableBody.innerHTML = '';
-                snapshot.forEach(doc => {
+                const depositoDocs = snapshot.docs.slice(0, 10).reverse();
+                depositoDocs.forEach((doc, index) => {
                     const data = doc.data();
                     if (data.status !== 'OK') {
                         totalDeposito += data.pix_deposito_solicitado;
+                        pendingDeposito += data.pix_deposito_solicitado;
                         const row = `<tr>
+                            <td>${index + 1}</td>
                             <td>${data.nome}</td>
                             <td>${data.pix}</td>
                             <td>${data.pix_deposito_solicitado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                             <td>
-                                <button class="copy-btn" data-copy="${data.pix}">Copy Pix</button>
-                                <button class="copy-btn" data-copy="${data.pix_deposito_solicitado}">Copy Amount</button>
+                                <button class="pix-btn" data-copy="${data.pix}">PIX</button>
+                                <button class="brl-btn" data-copy="${data.pix_deposito_solicitado}">BRL</button>
                                 <input type="text" class="codigo-input" placeholder="Enter codigo">
                                 <button class="upload-btn" data-id="${doc.id}">Upload</button>
-                                <input type="file" class="file-input" data-id="${doc.id}" style="display:none">
-                                <button class="file-btn" data-id="${doc.id}">Upload Image</button>
+                                <input type="file" class="file-input" data-id="${doc.id}">
+                                <button class="file-btn" data-id="${doc.id}">QR</button>
+                                <button class="ok-btn" data-id="${doc.id}" data-amount="${data.pix_deposito_solicitado}" data-uid="${data.uid}">OK</button>
                             </td>
                         </tr>`;
                         depositoTableBody.insertAdjacentHTML('beforeend', row);
@@ -494,8 +530,16 @@
 
                 document.getElementById('dashboard-total-deposito').textContent = `DEPOSITO SOLICITADO TOTAL: ${totalDeposito.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
                 document.getElementById('dashboard-total-deposito-ok').textContent = `DEPOSITO SOLICITADO OK TOTAL: ${totalDepositoOk.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                document.getElementById('dashboard-pending-deposito').textContent = `PENDING PAGAMENTO: ${pendingDeposito.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
 
-                document.querySelectorAll('.copy-btn').forEach(button => {
+                document.querySelectorAll('.pix-btn').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const textToCopy = button.getAttribute('data-copy');
+                        navigator.clipboard.writeText(textToCopy);
+                    });
+                });
+
+                document.querySelectorAll('.brl-btn').forEach(button => {
                     button.addEventListener('click', () => {
                         const textToCopy = button.getAttribute('data-copy');
                         navigator.clipboard.writeText(textToCopy);
@@ -548,6 +592,38 @@
                                 }
                             );
                         }
+                    });
+                });
+
+                document.querySelectorAll('.ok-btn').forEach(button => {
+                    button.addEventListener('click', async () => {
+                        const docId = button.getAttribute('data-id');
+                        const amount = parseFloat(button.getAttribute('data-amount'));
+                        const uid = button.getAttribute('data-uid');
+
+                        // Firestore에서 DEPOSITO 상태 업데이트
+                        await updateDoc(doc(db, "depositopix", docId), {
+                            status: 'OK'
+                        });
+
+                        // 해당 유저의 balance 업데이트
+                        const userDocRef = doc(db, "users", uid);
+                        const userDoc = await getDoc(userDocRef);
+                        if (userDoc.exists()) {
+                            const userData = userDoc.data();
+                            const newBalance = userData.balance + amount;
+                            await updateDoc(userDocRef, {
+                                balance: newBalance
+                            });
+                            // 현재 사용자 balance 업데이트
+                            if (auth.currentUser && auth.currentUser.uid === uid) {
+                                balance = newBalance;
+                                updateBalance();
+                            }
+                        }
+
+                        // 테이블에서 해당 행 제거
+                        button.closest('tr').remove();
                     });
                 });
             });
