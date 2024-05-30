@@ -147,6 +147,7 @@
     <div id="deposit-modal" class="modal">
         <div class="modal-content">
             <div class="logo">BLACK DICE</div>
+            <button class="modal-close-btn" id="deposit-modal-close-btn">X</button>
             <div class="modal-body">
                 <label for="deposit-amount">Digite o valor:</label>
                 <input type="number" id="deposit-amount" maxlength="20">
@@ -155,12 +156,19 @@
                 <button id="btn-600" class="btn">600</button>
                 <button id="btn-digitar" class="btn">Digitar</button>
                 <button id="generate-code-btn" class="btn">GERAR CODIGO</button>
+                <img id="loading-gif" src="assets/img/loading.gif" alt="Loading" style="display: none;">
+                <div id="generated-content" style="display: none;">
+                    <img id="pix-img" src="" alt="PIX Image">
+                    <p id="codigo-numero"></p>
+                    <button id="copy-btn" class="btn">Copiar</button>
+                </div>
             </div>
         </div>
     </div>
     <div id="saque-modal" class="modal">
         <div class="modal-content">
             <div class="logo">BLACK DICE</div>
+            <button class="modal-close-btn" id="saque-modal-close-btn">X</button>
             <div class="modal-body">
                 <h2>Parabéns!</h2>
                 <p>Você ganhou!</p>
@@ -199,644 +207,717 @@
         <p>A Prolific Trade N.V. é licenciada e regulamentada pela Antillephone N.V, sob a licença nº 8048/JAZ2024-009</p>
         <p>A Black Dice aceita apenas clientes com mais de 18 anos de idade. Apostar pode ser viciante. Jogue responsavelmente.</p>
     </footer>
-   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
-    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-analytics.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, updateDoc, where, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDO6_37Leg8EdVFTreP9V_xweJO3fa-UjQ",
-        authDomain: "black-dice-bk.firebaseapp.com",
-        projectId: "black-dice-bk",
-        storageBucket: "black-dice-bk.appspot.com",
-        messagingSenderId: "261104150179",
-        appId: "1:261104150179:web:ad2a65de446da3a7f6c116",
-        measurementId: "G-V1GKN9GFWN"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDO6_37Leg8EdVFTreP9V_xweJO3fa-UjQ",
+            authDomain: "black-dice-bk.firebaseapp.com",
+            projectId: "black-dice-bk",
+            storageBucket: "black-dice-bk.appspot.com",
+            messagingSenderId: "261104150179",
+            appId: "1:261104150179:web:ad2a65de446da3a7f6c116",
+            measurementId: "G-V1GKN9GFWN"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const auth = getAuth();
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const auth = getAuth();
+        const db = getFirestore(app);
 
-    const mainContent = document.getElementById("main-content");
-    const formContent = document.getElementById("form-content");
-    const loginForm = document.getElementById("login-form");
-    const signupForm = document.getElementById("signup-form");
-    const iframeContainer = document.getElementById("iframe-container");
-    const gameIframe = document.getElementById("game-iframe");
-    const bannerSection = document.getElementById("banner-section");
+        const mainContent = document.getElementById("main-content");
+        const formContent = document.getElementById("form-content");
+        const loginForm = document.getElementById("login-form");
+        const signupForm = document.getElementById("signup-form");
+        const iframeContainer = document.getElementById("iframe-container");
+        const gameIframe = document.getElementById("game-iframe");
+        const bannerSection = document.getElementById("banner-section");
 
-    const homeBtn = document.getElementById("home-btn");
-    const loginBtn = document.getElementById("login-btn");
-    const signupBtn = document.getElementById("signup-btn");
-    const showSignupFormBtn = document.getElementById("show-signup-form");
-    const showLoginFormBtn = document.getElementById("show-login-form");
+        const homeBtn = document.getElementById("home-btn");
+        const loginBtn = document.getElementById("login-btn");
+        const signupBtn = document.getElementById("signup-btn");
+        const showSignupFormBtn = document.getElementById("show-signup-form");
+        const showLoginFormBtn = document.getElementById("show-login-form");
 
-    const liveCasinoSidebar = document.getElementById("live-casino-sidebar");
-    const slotsSidebar = document.getElementById("slots-sidebar");
-    const sportsSidebar = document.getElementById("sports-sidebar");
+        const liveCasinoSidebar = document.getElementById("live-casino-sidebar");
+        const slotsSidebar = document.getElementById("slots-sidebar");
+        const sportsSidebar = document.getElementById("sports-sidebar");
 
-    const blackDice = document.getElementById("black-dice");
-    const bonus = document.getElementById("bonus");
-    const suporte = document.getElementById("suporte");
-    const suporteAoVivo = document.getElementById("suporte-ao-vivo");
-    const promocoes = document.getElementById("promocoes");
-    const indiqueUmAmigo = document.getElementById("indique-um-amigo");
-    const patrocinios = document.getElementById("patrocinios");
+        const blackDice = document.getElementById("black-dice");
+        const bonus = document.getElementById("bonus");
+        const suporte = document.getElementById("suporte");
+        const suporteAoVivo = document.getElementById("suporte-ao-vivo");
+        const promocoes = document.getElementById("promocoes");
+        const indiqueUmAmigo = document.getElementById("indique-um-amigo");
+        const patrocinios = document.getElementById("patrocinios");
 
-    const navMenu = document.getElementById("nav-menu");
-    const userInfo = document.getElementById("user-info");
-    const userName = document.getElementById("user-name");
-    const userBalance = document.getElementById("user-balance");
+        const navMenu = document.getElementById("nav-menu");
+        const userInfo = document.getElementById("user-info");
+        const userName = document.getElementById("user-name");
+        const userBalance = document.getElementById("user-balance");
 
-    const alertBox = document.getElementById("alert");
-    const closeAlertBtn = document.getElementById("close-alert");
+        const alertBox = document.getElementById("alert");
+        const closeAlertBtn = document.getElementById("close-alert");
 
-    const contentSection = document.getElementById("content-section");
-    const contentTitle = document.getElementById("content-title");
-    const contentSlogan = document.getElementById("content-slogan");
-    const contentDescription = document.getElementById("content-description");
+        const contentSection = document.getElementById("content-section");
+        const contentTitle = document.getElementById("content-title");
+        const contentSlogan = document.getElementById("content-slogan");
+        const contentDescription = document.getElementById("content-description");
 
-    const sections = {
-        "black-dice": {
-            title: "Black Dice",
-            slogan: "O Melhor do Jogo",
-            description: "Descubra a emoção dos nossos jogos exclusivos."
-        },
-        "bonus": {
-            title: "Bônus",
-            slogan: "Ganhe Mais",
-            description: "Aproveite nossos bônus incríveis para aumentar suas chances de ganhar."
-        },
-        "suporte": {
-            title: "Suporte",
-            slogan: "Estamos Aqui Para Ajudar",
-            description: "Nossa equipe de suporte está disponível 24/7 para assisti-lo."
-        },
-        "suporte-ao-vivo": {
-            title: "Suporte Ao Vivo",
-            slogan: "Ajuda Imediata",
-            description: "Converse com nossa equipe de suporte ao vivo para resolver seus problemas instantaneamente."
-        },
-        "promocoes": {
-            title: "Promoções",
-            slogan: "Ofertas Imperdíveis",
-            description: "Confira nossas promoções e ofertas especiais."
-        },
-        "indique-um-amigo": {
-            title: "Indique Um Amigo",
-            slogan: "Compartilhe a Diversão",
-            description: "Indique um amigo e ganhe recompensas incríveis."
-        },
-        "patrocinios": {
-            title: "Patrocínios",
-            slogan: "Nossos Parceiros",
-            description: "Conheça nossos parceiros e patrocinadores."
+        const sections = {
+            "black-dice": {
+                title: "Black Dice",
+                slogan: "O Melhor do Jogo",
+                description: "Descubra a emoção dos nossos jogos exclusivos."
+            },
+            "bonus": {
+                title: "Bônus",
+                slogan: "Ganhe Mais",
+                description: "Aproveite nossos bônus incríveis para aumentar suas chances de ganhar."
+            },
+            "suporte": {
+                title: "Suporte",
+                slogan: "Estamos Aqui Para Ajudar",
+                description: "Nossa equipe de suporte está disponível 24/7 para assisti-lo."
+            },
+            "suporte-ao-vivo": {
+                title: "Suporte Ao Vivo",
+                slogan: "Ajuda Imediata",
+                description: "Converse com nossa equipe de suporte ao vivo para resolver seus problemas instantaneamente."
+            },
+            "promocoes": {
+                title: "Promoções",
+                slogan: "Ofertas Imperdíveis",
+                description: "Confira nossas promoções e ofertas especiais."
+            },
+            "indique-um-amigo": {
+                title: "Indique Um Amigo",
+                slogan: "Compartilhe a Diversão",
+                description: "Indique um amigo e ganhe recompensas incríveis."
+            },
+            "patrocinios": {
+                title: "Patrocínios",
+                slogan: "Nossos Parceiros",
+                description: "Conheça nossos parceiros e patrocinadores."
+            }
+        };
+
+        function showContent(section) {
+            const sectionData = sections[section];
+            if (sectionData) {
+                contentTitle.innerText = sectionData.title;
+                contentSlogan.innerText = sectionData.slogan;
+                contentDescription.innerText = sectionData.description;
+                contentSection.style.display = "block";
+                mainContent.style.display = "none";
+                formContent.style.display = "none";
+                iframeContainer.style.display = "none";
+                bannerSection.style.display = "none";
+            }
         }
-    };
 
-    function showContent(section) {
-        const sectionData = sections[section];
-        if (sectionData) {
-            contentTitle.innerText = sectionData.title;
-            contentSlogan.innerText = sectionData.slogan;
-            contentDescription.innerText = sectionData.description;
-            contentSection.style.display = "block";
+        closeAlertBtn.addEventListener("click", () => {
+            alertBox.style.display = "none";
+        });
+
+        homeBtn.addEventListener("click", function() {
+            mainContent.style.display = "block";
+            contentSection.style.display = "none";
+            formContent.style.display = "none";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "block";
+            document.getElementById("popular-games").style.display = "block";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "none";
+            generateGames('popular-games', 12);
+        });
+
+        loginBtn.addEventListener("click", function() {
             mainContent.style.display = "none";
+            contentSection.style.display = "none";
+            formContent.style.display = "flex";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            loginForm.style.display = "block";
+            signupForm.style.display = "none";
+        });
+
+        signupBtn.addEventListener("click", function() {
+            mainContent.style.display = "none";
+            contentSection.style.display = "none";
+            formContent.style.display = "flex";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
+
+        showSignupFormBtn.addEventListener("click", function() {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
+
+        showLoginFormBtn.addEventListener("click", function() {
+            signupForm.style.display = "none";
+            loginForm.style.display = "block";
+        });
+
+        document.getElementById('signupButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const signupEmail = document.getElementById('signupEmail').value;
+            const signupPassword = document.getElementById('signupPassword').value;
+            const signupName = document.getElementById('signupName').value;
+            const signupPix = document.getElementById('signupPix').value;
+            const signupCPF = document.getElementById('signupCPF').value;
+            const signupDOB = document.getElementById('signupDOB').value;
+            const signupPhone = document.getElementById('signupPhone').value;
+
+            createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    // Save additional user information in the Firestore
+                    const userRef = doc(db, "users", user.uid);
+                    setDoc(userRef, {
+                        name: signupName,
+                        pix: signupPix,
+                        cpf: signupCPF,
+                        dob: signupDOB,
+                        phone: signupPhone,
+                        balance: 0 // Initialize balance
+                    }).then(() => {
+                        // Show alert and redirect to login form
+                        alertBox.style.display = "block";
+                        signupForm.style.display = "none";
+                        loginForm.style.display = "block";
+                    });
+                })
+                .catch((error) => {
+                    console.error(error.code, error.message);
+                });
+        });
+
+        document.getElementById('loginButton').addEventListener('click', (event) => {
+            event.preventDefault();
+            const loginEmail = document.getElementById('loginEmail').value;
+            const loginPassword = document.getElementById('loginPassword').value;
+
+            signInWithEmailAndPassword(auth, loginEmail, loginPassword)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    updateUserInfo(user);
+                    // Redirect to home screen after login
+                    homeBtn.click();
+                })
+                .catch((error) => {
+                    console.error(error.code, error.message);
+                });
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                navMenu.style.display = "flex";
+                userInfo.style.display = "none";
+            }).catch((error) => {
+                console.error(error.code, error.message);
+            });
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                updateUserInfo(user);
+                updateOnlineCount();
+            } else {
+                navMenu.style.display = "flex";
+                userInfo.style.display = "none";
+                onlineCount.innerText = 'ONLINE: 0 Pessoa(s)';
+            }
+        });
+
+        function updateUserInfo(user) {
+            const userRef = doc(db, "users", user.uid);
+            getDoc(userRef).then((docSnap) => {
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    userName.innerText = `${userData.name}`;
+                    userBalance.innerText = `Saldo : ${userData.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                    navMenu.style.display = "none";
+                    userInfo.style.display = "flex";
+                } else {
+                    console.error("No such document!");
+                }
+            }).catch((error) => {
+                console.error(error.code, error.message);
+            });
+        }
+
+        function showLiveCasino() {
+            mainContent.style.display = "block";
+            contentSection.style.display = "none";
             formContent.style.display = "none";
             iframeContainer.style.display = "none";
             bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "block";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "none";
+            generateGames('live-casino-games', 20);
         }
-    }
 
-    closeAlertBtn.addEventListener("click", () => {
-        alertBox.style.display = "none";
-    });
+        function showSlots() {
+            mainContent.style.display = "block";
+            contentSection.style.display = "none";
+            formContent.style.display = "none";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "block";
+            document.getElementById("sports-games").style.display = "none";
+            generateGames('slots-games', 20);
+        }
 
-    homeBtn.addEventListener("click", function() {
-        mainContent.style.display = "block";
-        contentSection.style.display = "none";
-        formContent.style.display = "none";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "block";
-        document.getElementById("popular-games").style.display = "block";
-        document.getElementById("live-casino-games").style.display = "none";
-        document.getElementById("slots-games").style.display = "none";
-        document.getElementById("sports-games").style.display = "none";
+        function showSports() {
+            mainContent.style.display = "block";
+            contentSection.style.display = "none";
+            formContent.style.display = "none";
+            iframeContainer.style.display = "none";
+            bannerSection.style.display = "none";
+            document.getElementById("popular-games").style.display = "none";
+            document.getElementById("live-casino-games").style.display = "none";
+            document.getElementById("slots-games").style.display = "none";
+            document.getElementById("sports-games").style.display = "block";
+            generateGames('sports-games', 20);
+        }
+
+        function generateGames(sectionId, count) {
+            var section = document.getElementById(sectionId);
+            var gamesGrid = section.querySelector('.games-grid');
+            gamesGrid.innerHTML = '';
+
+            var gameNames = [
+                "Blackjack Classic", "Roleta Europeia", "Baccarat", "Poker Texas Hold'em", "Bingo", "Caça-níquel Megaways",
+                "Craps", "Pôquer de Três Cartas", "Baccarat Ao Vivo", "Roleta Americana", "Blackjack VIP", "Dream Catcher",
+                "Monopoly Live", "Mega Ball", "Sic Bo", "Dragon Tiger", "Jogo do Bicho", "Keno", "Roleta Francesa", "Blackjack Switch",
+                "Stud Poker", "Casino Hold'em", "Double Ball Roulette", "Football Studio", "Lightning Dice", "Deal or No Deal",
+                "Side Bet City", "Crazy Time", "Mega Wheel", "Cash or Crash", "Gonzo's Treasure Hunt", "Roulette Double Up",
+                "Poker Omaha", "Baccarat Squeeze", "Pontoon", "Three Card Poker Prime", "Dragonara Roulette", "Auto Roulette",
+                "Speed Baccarat", "No Commission Baccarat", "First Person Blackjack", "Caribbean Stud Poker", "Texas Hold'em Bonus",
+                "Free Bet Blackjack", "Infinite Blackjack", "Blackjack Party", "Instant Roulette", "Double Exposure Blackjack",
+                "European Poker Tour", "World Series of Poker", "PokerStars Live", "All American Poker", "Ultimate Texas Hold'em",
+                "Let It Ride", "Pai Gow Poker", "Five Card Draw", "High Card Flush", "Razz Poker", "Chinese Poker", "Open Face Chinese Poker"
+            ];
+
+            for (var i = 0; i < count; i++) {
+                var gameItem = document.createElement('div');
+                gameItem.className = 'game-item';
+                gameItem.innerHTML = `
+                    <img src="image${i % 60 + 1}.png" alt="${gameNames[i % gameNames.length]}">
+                    <h3>${gameNames[i % gameNames.length]}</h3>
+                    <div class="game-buttons">
+                        <a href="#" class="btn small play-now">Jogar Agora</a>
+                        <a href="#" class="btn small">Demo</a>
+                    </div>
+                `;
+                gamesGrid.appendChild(gameItem);
+            }
+
+            var playNowButtons = document.querySelectorAll(".play-now");
+            playNowButtons.forEach(function(button) {
+                button.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    const videoSrc = "https://5cb650433a.icsobdjtjn.net/gs2c/playGame.do?key=token%3D6079b79a941b4b6ab3679e8ed3671fb2%60%7C%60symbol%3D460%60%7C%60technology%3DH5%60%7C%60platform%3DWEB%60%7C%60language%3Dpt%60%7C%60currency%3DBRL%60%7C%60cashierUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Foffice%2Frecharge%2F%60%7C%60lobbyUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Fcasino&ppkv=2&stylename=1xbet_sw&rcCloseUrl=https://br.1xbet.com/casino&isGameUrlApiCalled=true";
+                    bannerSection.style.display = "none";
+                    contentSection.style.display = "none";
+                    formContent.style.display = "none";
+                    mainContent.style.display = "none";
+                    iframeContainer.style.display = "block";
+                    gameIframe.src = videoSrc;
+
+                    gameIframe.onload = function() {
+                        setTimeout(function() {
+                            var iframeDoc = gameIframe.contentDocument || gameIframe.contentWindow.document;
+                            var betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
+                            var userBalanceElement = document.getElementById("user-balance");
+
+                            function decreaseBalance() {
+                                var balance = parseFloat(userBalanceElement.innerText.replace('Saldo : ', '').replace(' BRL', '').replace(/\./g, '').replace(',', '.'));
+                                balance -= 1;
+                                userBalanceElement.innerText = 'Saldo : ' + balance.toLocaleString('pt-BR') + ' BRL';
+                            }
+
+                            function attachClickListeners() {
+                                var paths = betBoardWrapper.querySelectorAll("path");
+                                paths.forEach(function(path) {
+                                    path.addEventListener("click", decreaseBalance);
+                                });
+                            }
+
+                            if (betBoardWrapper) {
+                                attachClickListeners();
+                            } else {
+                                var interval = setInterval(function() {
+                                    betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
+                                    if (betBoardWrapper) {
+                                        attachClickListeners();
+                                        clearInterval(interval);
+                                    }
+                                }, 1000);
+                            }
+                        }, 3000);
+                    };
+                });
+            });
+        }
+
         generateGames('popular-games', 12);
-    });
-
-    loginBtn.addEventListener("click", function() {
-        mainContent.style.display = "none";
-        contentSection.style.display = "none";
-        formContent.style.display = "flex";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "none";
-        loginForm.style.display = "block";
-        signupForm.style.display = "none";
-    });
-
-    signupBtn.addEventListener("click", function() {
-        mainContent.style.display = "none";
-        contentSection.style.display = "none";
-        formContent.style.display = "flex";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "none";
-        loginForm.style.display = "none";
-        signupForm.style.display = "block";
-    });
-
-    showSignupFormBtn.addEventListener("click", function() {
-        loginForm.style.display = "none";
-        signupForm.style.display = "block";
-    });
-
-    showLoginFormBtn.addEventListener("click", function() {
-        signupForm.style.display = "none";
-        loginForm.style.display = "block";
-    });
-
-    document.getElementById('signupButton').addEventListener('click', (event) => {
-        event.preventDefault();
-        const signupEmail = document.getElementById('signupEmail').value;
-        const signupPassword = document.getElementById('signupPassword').value;
-        const signupName = document.getElementById('signupName').value;
-        const signupPix = document.getElementById('signupPix').value;
-        const signupCPF = document.getElementById('signupCPF').value;
-        const signupDOB = document.getElementById('signupDOB').value;
-        const signupPhone = document.getElementById('signupPhone').value;
-
-        createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                // Save additional user information in the Firestore
-                const userRef = doc(db, "users", user.uid);
-                setDoc(userRef, {
-                    name: signupName,
-                    pix: signupPix,
-                    cpf: signupCPF,
-                    dob: signupDOB,
-                    phone: signupPhone,
-                    balance: 0 // Initialize balance
-                }).then(() => {
-                    // Show alert and redirect to login form
-                    alertBox.style.display = "block";
-                    signupForm.style.display = "none";
-                    loginForm.style.display = "block";
-                });
-            })
-            .catch((error) => {
-                console.error(error.code, error.message);
-            });
-    });
-
-    document.getElementById('loginButton').addEventListener('click', (event) => {
-        event.preventDefault();
-        const loginEmail = document.getElementById('loginEmail').value;
-        const loginPassword = document.getElementById('loginPassword').value;
-
-        signInWithEmailAndPassword(auth, loginEmail, loginPassword)
-            .then((userCredential) => {
-                const user = userCredential.user;
-                updateUserInfo(user);
-                // Redirect to home screen after login
-                homeBtn.click();
-            })
-            .catch((error) => {
-                console.error(error.code, error.message);
-            });
-    });
-
-    document.getElementById('logout-btn').addEventListener('click', () => {
-        signOut(auth).then(() => {
-            navMenu.style.display = "flex";
-            userInfo.style.display = "none";
-        }).catch((error) => {
-            console.error(error.code, error.message);
-        });
-    });
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            updateUserInfo(user);
-            updateOnlineCount();
-        } else {
-            navMenu.style.display = "flex";
-            userInfo.style.display = "none";
-            onlineCount.innerText = 'ONLINE: 0 Pessoa(s)';
-        }
-    });
-
-    function updateUserInfo(user) {
-        const userRef = doc(db, "users", user.uid);
-        getDoc(userRef).then((docSnap) => {
-            if (docSnap.exists()) {
-                const userData = docSnap.data();
-                userName.innerText = `${userData.name}`;
-                userBalance.innerText = `Saldo : ${userData.balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
-                navMenu.style.display = "none";
-                userInfo.style.display = "flex";
-            } else {
-                console.error("No such document!");
-            }
-        }).catch((error) => {
-            console.error(error.code, error.message);
-        });
-    }
-
-    function showLiveCasino() {
-        mainContent.style.display = "block";
-        contentSection.style.display = "none";
-        formContent.style.display = "none";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "none";
-        document.getElementById("popular-games").style.display = "none";
-        document.getElementById("live-casino-games").style.display = "block";
-        document.getElementById("slots-games").style.display = "none";
-        document.getElementById("sports-games").style.display = "none";
         generateGames('live-casino-games', 20);
-    }
-
-    function showSlots() {
-        mainContent.style.display = "block";
-        contentSection.style.display = "none";
-        formContent.style.display = "none";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "none";
-        document.getElementById("popular-games").style.display = "none";
-        document.getElementById("live-casino-games").style.display = "none";
-        document.getElementById("slots-games").style.display = "block";
-        document.getElementById("sports-games").style.display = "none";
         generateGames('slots-games', 20);
-    }
-
-    function showSports() {
-        mainContent.style.display = "block";
-        contentSection.style.display = "none";
-        formContent.style.display = "none";
-        iframeContainer.style.display = "none";
-        bannerSection.style.display = "none";
-        document.getElementById("popular-games").style.display = "none";
-        document.getElementById("live-casino-games").style.display = "none";
-        document.getElementById("slots-games").style.display = "none";
-        document.getElementById("sports-games").style.display = "block";
         generateGames('sports-games', 20);
-    }
 
-    function generateGames(sectionId, count) {
-        var section = document.getElementById(sectionId);
-        var gamesGrid = section.querySelector('.games-grid');
-        gamesGrid.innerHTML = '';
+        liveCasinoSidebar.addEventListener("click", function() {
+            showLiveCasino();
+        });
 
-        var gameNames = [
-            "Blackjack Classic", "Roleta Europeia", "Baccarat", "Poker Texas Hold'em", "Bingo", "Caça-níquel Megaways",
-            "Craps", "Pôquer de Três Cartas", "Baccarat Ao Vivo", "Roleta Americana", "Blackjack VIP", "Dream Catcher",
-            "Monopoly Live", "Mega Ball", "Sic Bo", "Dragon Tiger", "Jogo do Bicho", "Keno", "Roleta Francesa", "Blackjack Switch",
-            "Stud Poker", "Casino Hold'em", "Double Ball Roulette", "Football Studio", "Lightning Dice", "Deal or No Deal",
-            "Side Bet City", "Crazy Time", "Mega Wheel", "Cash or Crash", "Gonzo's Treasure Hunt", "Roulette Double Up",
-            "Poker Omaha", "Baccarat Squeeze", "Pontoon", "Three Card Poker Prime", "Dragonara Roulette", "Auto Roulette",
-            "Speed Baccarat", "No Commission Baccarat", "First Person Blackjack", "Caribbean Stud Poker", "Texas Hold'em Bonus",
-            "Free Bet Blackjack", "Infinite Blackjack", "Blackjack Party", "Instant Roulette", "Double Exposure Blackjack",
-            "European Poker Tour", "World Series of Poker", "PokerStars Live", "All American Poker", "Ultimate Texas Hold'em",
-            "Let It Ride", "Pai Gow Poker", "Five Card Draw", "High Card Flush", "Razz Poker", "Chinese Poker", "Open Face Chinese Poker"
-        ];
+        slotsSidebar.addEventListener("click", function() {
+            showSlots();
+        });
 
-        for (var i = 0; i < count; i++) {
-            var gameItem = document.createElement('div');
-            gameItem.className = 'game-item';
-            gameItem.innerHTML = `
-                <img src="image${i % 60 + 1}.png" alt="${gameNames[i % gameNames.length]}">
-                <h3>${gameNames[i % gameNames.length]}</h3>
-                <div class="game-buttons">
-                    <a href="#" class="btn small play-now">Jogar Agora</a>
-                    <a href="#" class="btn small">Demo</a>
-                </div>
-            `;
-            gamesGrid.appendChild(gameItem);
-        }
+        sportsSidebar.addEventListener("click", function() {
+            showSports();
+        });
 
-        var playNowButtons = document.querySelectorAll(".play-now");
-        playNowButtons.forEach(function(button) {
-            button.addEventListener("click", function(event) {
-                event.preventDefault();
-                const videoSrc = "https://login-mit.onegameslink.com/GameLauncher?casino=softswiss.cur3&clientPlatform=web&clientType=live&currency=BRL&depositUrl=https%3A%2F%2Fblaze.com%2F%3Fmodal%3Dcashier%26type%3Ddeposit&externalToken=44ab5ef7-f72d-4028-b0ee-e75cb9411cad&gameCodeName=ubal&language=pt&lobbyUrl=https%3A%2F%2Fblaze.com&tableAlias=bal_minibaccarat&username=1561056041";
-                bannerSection.style.display = "none";
-                contentSection.style.display = "none";
-                formContent.style.display = "none";
-                mainContent.style.display = "none";
-                iframeContainer.style.display = "block";
-                gameIframe.src = videoSrc;
+        blackDice.addEventListener("click", function() {
+            showContent("black-dice");
+        });
 
-                gameIframe.onload = function() {
-                    setTimeout(function() {
-                        var iframeDoc = gameIframe.contentDocument || gameIframe.contentWindow.document;
-                        var betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
-                        var userBalanceElement = document.getElementById("user-balance");
+        bonus.addEventListener("click", function() {
+            showContent("bonus");
+        });
 
-                        function decreaseBalance() {
-                            var balance = parseFloat(userBalanceElement.innerText.replace('Saldo : ', '').replace(' BRL', '').replace(/\./g, '').replace(',', '.'));
-                            balance -= 1;
-                            userBalanceElement.innerText = 'Saldo : ' + balance.toLocaleString('pt-BR') + ' BRL';
-                        }
+        suporte.addEventListener("click", function() {
+            showContent("suporte");
+        });
 
-                        function attachClickListeners() {
-                            var paths = betBoardWrapper.querySelectorAll("path");
-                            paths.forEach(function(path) {
-                                path.addEventListener("click", decreaseBalance);
-                            });
-                        }
+        suporteAoVivo.addEventListener("click", function() {
+            showContent("suporte-ao-vivo");
+        });
 
-                        if (betBoardWrapper) {
-                            attachClickListeners();
-                        } else {
-                            var interval = setInterval(function() {
-                                betBoardWrapper = iframeDoc.querySelector(".betboard_desktop_wrapper.dndBetBoard.droppable-cancel.global_bb_shadow");
-                                if (betBoardWrapper) {
-                                    attachClickListeners();
-                                    clearInterval(interval);
-                                }
-                            }, 1000);
-                        }
-                    }, 3000);
-                };
+        promocoes.addEventListener("click", function() {
+            showContent("promocoes");
+        });
+
+        indiqueUmAmigo.addEventListener("click", function() {
+            showContent("indique-um-amigo");
+        });
+
+        patrocinios.addEventListener("click", function() {
+            showContent("patrocinios");
+        });
+
+        // Deposit functionality
+        const depositBtn = document.getElementById('depositar-btn');
+        const depositModal = document.getElementById('deposit-modal');
+        const depositModalCloseBtn = document.getElementById('deposit-modal-close-btn');
+        const generateCodeBtn = document.getElementById('generate-code-btn');
+        const btn60 = document.getElementById('btn-60');
+        const btn240 = document.getElementById('btn-240');
+        const btn600 = document.getElementById('btn-600');
+        const btnDigitar = document.getElementById('btn-digitar');
+        const depositAmountInput = document.getElementById('deposit-amount');
+        const loadingGif = document.getElementById('loading-gif');
+        const generatedContent = document.getElementById('generated-content');
+        const pixImg = document.getElementById('pix-img');
+        const codigoNumero = document.getElementById('codigo-numero');
+        const copyBtn = document.getElementById('copy-btn');
+
+        depositBtn.addEventListener('click', () => {
+            depositModal.style.display = 'flex';
+        });
+
+        depositModalCloseBtn.addEventListener('click', () => {
+            depositModal.style.display = 'none';
+        });
+
+        generateCodeBtn.addEventListener('click', async () => {
+            const user = auth.currentUser;
+            const depositAmount = parseFloat(depositAmountInput.value);
+            if (user && !isNaN(depositAmount) && depositAmount > 0) {
+                const userDoc = await getDoc(doc(db, 'users', user.uid));
+                if (userDoc.exists()) {
+                    const userData = userDoc.data();
+                    const newBalance = userData.balance + depositAmount;
+
+                    loadingGif.style.display = 'block';
+                    generatedContent.style.display = 'none';
+
+                    setTimeout(async () => {
+                        await addDoc(collection(db, 'depositopix'), {
+                            nome: userData.name,
+                            pix: userData.pix,
+                            pix_deposito_solicitado: depositAmount,
+                            saldo_anterior: userData.balance,
+                            saldo_atualizado: newBalance,
+                            status: 'pending',
+                            timestamp: serverTimestamp()
+                        });
+
+                        loadingGif.style.display = 'none';
+                        generatedContent.style.display = 'block';
+                        pixImg.src = 'generated_pix_image_url'; // Replace with the actual image URL
+                        codigoNumero.innerText = 'Generated Code'; // Replace with the actual code
+                    }, 15000);
+                }
+            } else {
+                alert('Insira um valor de depósito válido.');
+            }
+        });
+
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(codigoNumero.innerText).then(() => {
+                copyBtn.innerText = 'Copiar Concluído';
             });
         });
-    }
 
-    generateGames('popular-games', 12);
-    generateGames('live-casino-games', 20);
-    generateGames('slots-games', 20);
-    generateGames('sports-games', 20);
+        btn60.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/xkGEzKfr');
+        });
 
-    liveCasinoSidebar.addEventListener("click", function() {
-        showLiveCasino();
-    });
+        btn240.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/vnbMclNE');
+        });
 
-    slotsSidebar.addEventListener("click", function() {
-        showSlots();
-    });
+        btn600.addEventListener('click', () => {
+            openPixWindow('https://geradordepix.com/pagamento/yBETjUdn');
+        });
 
-    sportsSidebar.addEventListener("click", function() {
-        showSports();
-    });
+        btnDigitar.addEventListener('click', () => {
+            depositAmountInput.focus();
+        });
 
-    blackDice.addEventListener("click", function() {
-        showContent("black-dice");
-    });
+        function openPixWindow(url) {
+            const newWindow = window.open(url, 'PIX Window', 'width=600,height=600');
+            newWindow.onload = () => {
+                newWindow.document.body.style.display = 'flex';
+                newWindow.document.body.style.justifyContent = 'center';
+                newWindow.document.body.style.alignItems = 'center';
+            };
+        }
 
-    bonus.addEventListener("click", function() {
-        showContent("bonus");
-    });
+        // Chat functionality
+        const chatMessages = document.getElementById('chat-messages');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const onlineCount = document.getElementById('online-count');
 
-    suporte.addEventListener("click", function() {
-        showContent("suporte");
-    });
-
-    suporteAoVivo.addEventListener("click", function() {
-        showContent("suporte-ao-vivo");
-    });
-
-    promocoes.addEventListener("click", function() {
-        showContent("promocoes");
-    });
-
-    indiqueUmAmigo.addEventListener("click", function() {
-        showContent("indique-um-amigo");
-    });
-
-    patrocinios.addEventListener("click", function() {
-        showContent("patrocinios");
-    });
-
-    // Deposit functionality
-    const depositBtn = document.getElementById('depositar-btn');
-    const depositModal = document.getElementById('deposit-modal');
-    const generateCodeBtn = document.getElementById('generate-code-btn');
-    const btn60 = document.getElementById('btn-60');
-    const btn240 = document.getElementById('btn-240');
-    const btn600 = document.getElementById('btn-600');
-    const btnDigitar = document.getElementById('btn-digitar');
-    const depositAmountInput = document.getElementById('deposit-amount');
-
-    depositBtn.addEventListener('click', () => {
-        depositModal.style.display = 'flex';
-    });
-
-    generateCodeBtn.addEventListener('click', async () => {
-        const user = auth.currentUser;
-        const depositAmount = parseFloat(depositAmountInput.value);
-        if (user && !isNaN(depositAmount) && depositAmount > 0) {
-            const userDoc = await getDoc(doc(db, 'users', user.uid));
-            if (userDoc.exists()) {
-                const userData = userDoc.data();
-                const newBalance = userData.balance + depositAmount;
-
-                await addDoc(collection(db, 'depositopix'), {
-                    nome: userData.name,
-                    pix: userData.pix,
-                    pix_deposito_solicitado: depositAmount,
-                    saldo_anterior: userData.balance,
-                    saldo_atualizado: newBalance,
-                    status: 'pending',
-                    timestamp: serverTimestamp()
-                });
-
-                depositModal.classList.add('fade-out');
-                setTimeout(() => {
-                    depositModal.style.display = 'none';
-                    depositModal.classList.remove('fade-out');
-                }, 1000);
+        chatInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                sendMessage();
             }
-        } else {
-            alert('Insira um valor de depósito válido.');
-        }
-    });
+        });
 
-    btn60.addEventListener('click', () => {
-        openPixWindow('https://geradordepix.com/pagamento/xkGEzKfr');
-    });
-
-    btn240.addEventListener('click', () => {
-        openPixWindow('https://geradordepix.com/pagamento/vnbMclNE');
-    });
-
-    btn600.addEventListener('click', () => {
-        openPixWindow('https://geradordepix.com/pagamento/yBETjUdn');
-    });
-
-    btnDigitar.addEventListener('click', () => {
-        depositAmountInput.focus();
-    });
-
-    function openPixWindow(url) {
-        const newWindow = window.open(url, 'PIX Window', 'width=600,height=600');
-        newWindow.onload = () => {
-            newWindow.document.body.style.display = 'flex';
-            newWindow.document.body.style.justifyContent = 'center';
-            newWindow.document.body.style.alignItems = 'center';
-        };
-    }
-
-    // Chat functionality
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const chatSend = document.getElementById('chat-send');
-    const onlineCount = document.getElementById('online-count');
-
-    chatInput.addEventListener('keypress', (event) => {
-        if (event.key === 'Enter') {
+        chatSend.addEventListener('click', () => {
             sendMessage();
-        }
-    });
+        });
 
-    chatSend.addEventListener('click', () => {
-        sendMessage();
-    });
+        function sendMessage() {
+            if (chatInput.value.trim() === '') return;
 
-    function sendMessage() {
-        if (chatInput.value.trim() === '') return;
-
-        const user = auth.currentUser;
-        if (!user) {
-            alert('Faça login na sua conta.');
-            return;
-        }
-
-        const userDoc = getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
-            if (!userDoc.exists()) {
-                alert('usuário não encontrado.');
+            const user = auth.currentUser;
+            if (!user) {
+                alert('Faça login na sua conta.');
                 return;
             }
 
-            const message = {
-                text: chatInput.value.trim(),
-                timestamp: serverTimestamp(),
-                username: userDoc.data().name
-            };
+            const userDoc = getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                if (!userDoc.exists()) {
+                    alert('usuário não encontrado.');
+                    return;
+                }
 
-            addDoc(collection(db, 'chat', 'general', 'messages'), message);
-            chatInput.value = '';
+                const message = {
+                    text: chatInput.value.trim(),
+                    timestamp: serverTimestamp(),
+                    username: userDoc.data().name
+                };
+
+                addDoc(collection(db, 'chat', 'general', 'messages'), message);
+                chatInput.value = '';
+            });
+        }
+
+        const q = query(collection(db, 'chat', 'general', 'messages'), orderBy('timestamp', 'asc'));
+
+        onSnapshot(q, (snapshot) => {
+            chatMessages.innerHTML = '';
+            snapshot.forEach((doc) => {
+                const msg = doc.data();
+                const time = msg.timestamp.toDate();
+                const timeString = time.getHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0');
+                const msgDiv = document.createElement('div');
+                msgDiv.textContent = `${msg.username}: ${msg.text} (${timeString})`;
+                chatMessages.appendChild(msgDiv);
+
+                const now = new Date();
+                const messageTime = msg.timestamp.toDate();
+                const timeDiff = now - messageTime;
+
+                if (timeDiff > 1800000) { // 30 minutes
+                    deleteDoc(doc.ref);
+                }
+            });
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         });
-    }
 
-    const q = query(collection(db, 'chat', 'general', 'messages'), orderBy('timestamp', 'asc'));
+        // Online user count
+        function updateOnlineCount() {
+            const onlineQuery = query(collection(db, 'users'), where('online', '==', true));
+            onSnapshot(onlineQuery, (snapshot) => {
+                const onlineUsers = snapshot.size;
+                onlineCount.innerText = `ONLINE: ${onlineUsers} Pessoa(s)`;
+            });
+        }
 
-    onSnapshot(q, (snapshot) => {
-        chatMessages.innerHTML = '';
-        snapshot.forEach((doc) => {
-            const msg = doc.data();
-            const time = msg.timestamp.toDate();
-            const timeString = time.getHours().toString().padStart(2, '0') + ':' + time.getMinutes().toString().padStart(2, '0');
-            const msgDiv = document.createElement('div');
-            msgDiv.textContent = `${msg.username}: ${msg.text} (${timeString})`;
-            chatMessages.appendChild(msgDiv);
+        // Update user online status
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const userRef = doc(db, 'users', user.uid);
+                updateDoc(userRef, { online: true });
 
-            const now = new Date();
-            const messageTime = msg.timestamp.toDate();
-            const timeDiff = now - messageTime;
-
-            if (timeDiff > 1800000) { // 30 minutes
-                deleteDoc(doc.ref);
+                window.addEventListener('beforeunload', () => {
+                    updateDoc(userRef, { online: false });
+                });
             }
         });
 
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    });
+        // Saque PIX Popup
+        const saquePixLink = document.getElementById('saque-pix-link');
+        const saqueModal = document.getElementById('saque-modal');
+        const saqueModalCloseBtn = document.getElementById('saque-modal-close-btn');
+        const closeSaquePopupButton = document.getElementById('close-saque-popup');
+        const saqueNome = document.getElementById('saque-nome');
+        const saqueCpf = document.getElementById('saque-cpf');
+        const saquePix = document.getElementById('saque-pix');
+        const saqueBalance = document.getElementById('saque-balance');
+        const saqueAmount = document.getElementById('saque-amount');
+        const saqueConfirmBtn = document.getElementById('saque-confirm-btn');
 
-    // Online user count
-    function updateOnlineCount() {
-        const onlineQuery = query(collection(db, 'users'), where('online', '==', true));
-        onSnapshot(onlineQuery, (snapshot) => {
-            const onlineUsers = snapshot.size;
-            onlineCount.innerText = `ONLINE: ${onlineUsers} Pessoa(s)`;
-        });
-    }
-
-    // Update user online status
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            const userRef = doc(db, 'users', user.uid);
-            updateDoc(userRef, { online: true });
-
-            window.addEventListener('beforeunload', () => {
-                updateDoc(userRef, { online: false });
-            });
-        }
-    });
-
-    // Saque PIX Popup
-    const saquePixLink = document.getElementById('saque-pix-link');
-    const saqueModal = document.getElementById('saque-modal');
-    const closeSaquePopupButton = document.getElementById('close-saque-popup');
-    const saqueNome = document.getElementById('saque-nome');
-    const saqueCpf = document.getElementById('saque-cpf');
-    const saquePix = document.getElementById('saque-pix');
-    const saqueBalance = document.getElementById('saque-balance');
-    const saqueAmount = document.getElementById('saque-amount');
-    const saqueConfirmBtn = document.getElementById('saque-confirm-btn');
-
-    saquePixLink.addEventListener('click', function(event) {
-        event.preventDefault();
-        const user = auth.currentUser;
-        if (user) {
-            getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    saqueNome.innerText = userData.name;
-                    saqueCpf.innerText = userData.cpf;
-                    saquePix.innerText = userData.pix;
-                    saqueBalance.innerText = userData.balance;
-                    saqueModal.style.display = 'flex';
-                }
-            });
-        }
-    });
-
-    closeSaquePopupButton.addEventListener('click', function() {
-        saqueModal.style.display = 'none';
-    });
-
-    saqueConfirmBtn.addEventListener('click', function() {
-        const user = auth.currentUser;
-        if (user) {
-            getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    const saqueValue = parseFloat(saqueAmount.value);
-                    const newBalance = userData.balance - saqueValue;
-
-                    if (newBalance >= 0) {
-                        updateDoc(doc(db, 'users', user.uid), { balance: newBalance }).then(() => {
-                            addDoc(collection(db, 'saquepix'), {
-                                nome: userData.name,
-                                cpf: userData.cpf,
-                                pix: userData.pix,
-                                pix_saque_solicitado: saqueValue,
-                                saldo_anterior: userData.balance,
-                                saldo_atualizado: newBalance
-                            }).then(() => {
-                                saqueBalance.innerText = newBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-                                alert('Saque realizado com sucesso!');
-                                saqueModal.style.display = 'none';
-                            });
-                        });
-                    } else {
-                        alert('Saldo insuficiente.');
+        saquePixLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            const user = auth.currentUser;
+            if (user) {
+                getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        saqueNome.innerText = userData.name;
+                        saqueCpf.innerText = userData.cpf;
+                        saquePix.innerText = userData.pix;
+                        saqueBalance.innerText = userData.balance;
+                        saqueModal.style.display = 'flex';
                     }
-                }
+                });
+            }
+        });
+
+        saqueModalCloseBtn.addEventListener('click', function() {
+            saqueModal.style.display = 'none';
+        });
+
+        closeSaquePopupButton.addEventListener('click', function() {
+            saqueModal.style.display = 'none';
+        });
+
+        saqueConfirmBtn.addEventListener('click', function() {
+            const user = auth.currentUser;
+            if (user) {
+                getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data();
+                        const saqueValue = parseFloat(saqueAmount.value);
+                        const newBalance = userData.balance - saqueValue;
+
+                        if (newBalance >= 0) {
+                            updateDoc(doc(db, 'users', user.uid), { balance: newBalance }).then(() => {
+                                addDoc(collection(db, 'saquepix'), {
+                                    nome: userData.name,
+                                    cpf: userData.cpf,
+                                    pix: userData.pix,
+                                    pix_saque_solicitado: saqueValue,
+                                    saldo_anterior: userData.balance,
+                                    saldo_atualizado: newBalance
+                                }).then(() => {
+                                    saqueBalance.innerText = newBalance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                    alert('Saque realizado com sucesso!');
+                                    saqueModal.style.display = 'none';
+                                });
+                            });
+                        } else {
+                            alert('Saldo insuficiente.');
+                        }
+                    }
+                });
+            }
+        });
+
+        // Dice game functionality
+        const diceGameLogo = document.querySelector('.logo');
+        const diceGameUrl = 'dicegame.html'; // URL for the dice game page
+
+        diceGameLogo.addEventListener('click', () => {
+            window.open(diceGameUrl, 'Dice Game', 'width=800,height=600');
+        });
+
+        const jogarAgoraBtn = document.getElementById('jogar-agora');
+
+        jogarAgoraBtn.addEventListener('click', function() {
+            const iframeUrl = 'https://5cb650433a.icsobdjtjn.net/gs2c/playGame.do?key=token%3D6079b79a941b4b6ab3679e8ed3671fb2%60%7C%60symbol%3D460%60%7C%60technology%3DH5%60%7C%60platform%3DWEB%60%7C%60language%3Dpt%60%7C%60currency%3DBRL%60%7C%60cashierUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Foffice%2Frecharge%2F%60%7C%60lobbyUrl%3Dhttps%3A%2F%2Fbr.1xbet.com%2Fcasino&ppkv=2&stylename=1xbet_sw&rcCloseUrl=https://br.1xbet.com/casino&isGameUrlApiCalled=true';
+
+            const iframeBox = document.createElement('div');
+            iframeBox.id = 'iframe-box';
+            iframeBox.style.position = 'fixed';
+            iframeBox.style.top = '50%';
+            iframeBox.style.left = '50%';
+            iframeBox.style.transform = 'translate(-50%, -50%)';
+            iframeBox.style.width = '80%';
+            iframeBox.style.height = '80%';
+            iframeBox.style.backgroundColor = '#000';
+            iframeBox.style.zIndex = '1000';
+            iframeBox.style.display = 'flex';
+            iframeBox.style.flexDirection = 'column';
+            iframeBox.style.alignItems = 'center';
+            iframeBox.style.justifyContent = 'center';
+
+            const closeBtn = document.createElement('button');
+            closeBtn.innerText = 'X';
+            closeBtn.style.alignSelf = 'flex-end';
+            closeBtn.style.margin = '10px';
+            closeBtn.style.padding = '5px 10px';
+            closeBtn.style.backgroundColor = '#e50914';
+            closeBtn.style.color = '#fff';
+            closeBtn.style.border = 'none';
+            closeBtn.style.borderRadius = '5px';
+            closeBtn.style.cursor = 'pointer';
+
+            closeBtn.addEventListener('click', () => {
+                iframeBox.remove();
             });
-        }
-    });
 
-    // Dice game functionality
-    const diceGameLogo = document.querySelector('.logo');
-    const diceGameUrl = 'dicegame.html'; // URL for the dice game page
+            const iframe = document.createElement('iframe');
+            iframe.src = iframeUrl;
+            iframe.style.width = '100%';
+            iframe.style.height = '90%';
+            iframe.style.border = 'none';
 
-    diceGameLogo.addEventListener('click', () => {
-        window.open(diceGameUrl, 'Dice Game', 'width=800,height=600');
-    });
-</script>
+            iframeBox.appendChild(closeBtn);
+            iframeBox.appendChild(iframe);
+
+            document.body.appendChild(iframeBox);
+        });
+
+    </script>
 </body>
 </html>
